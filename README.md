@@ -72,6 +72,10 @@ Nastav environment proměnné (viz konfigurace výše). Pro jednoduchost doporu�
 použít [direnv](https://direnv.net/), který nastaví environment proměnné pro vývoj
 při změně adresáře na adresář s projektem. 
 
+Příklad `.envrc`:
+
+    export DATABASE_URL=postgres://db:db@localhost:5432/vydej
+
 Pro lokální vývoj obsahují settings:
 
     DEBUG = True
