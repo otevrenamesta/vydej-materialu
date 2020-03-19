@@ -11,7 +11,7 @@ COPY . .
 ENV DJANGO_SETTINGS_MODULE "config.settings.production"
 
 # fake values for required env variables used to run collectstatic during build
-RUN DJANGO_SECRET_KEY=x DATABASE_URL=postgres://x/x \
+RUN DJANGO_SECRET_KEY=x DATABASE_URL=postgres://x/x DJANGO_ALLOWED_HOSTS=x \
     python manage.py collectstatic
 
 EXPOSE 8000
