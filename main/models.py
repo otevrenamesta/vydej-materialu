@@ -7,7 +7,7 @@ class Region(models.Model):
     DISABLED = "disabled"
     STATUS_CHOICES = [
         (ACTIVE, "aktivní"),
-        (DISABLED, "pozastaven"),
+        (DISABLED, "pozastaveno"),
     ]
 
     name = models.CharField("název", max_length=1000)
@@ -15,18 +15,28 @@ class Region(models.Model):
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=ACTIVE, db_index=True
     )
-    admins = models.ManyToManyField(settings.AUTH_USER_MODEL, through="RegionAdmin",)
+    admins = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, verbose_name="správce", through="RegionAdmin",
+    )
 
     class Meta:
         ordering = ["name"]
+        verbose_name = "Oblast"
+        verbose_name_plural = "Oblasti"
 
     def __str__(self):
         return self.name
 
 
 class RegionAdmin(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    region = models.ForeignKey(Region, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="uživatel", on_delete=models.CASCADE
+    )
+    region = models.ForeignKey(Region, verbose_name="oblast", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Správce oblasti"
+        verbose_name_plural = "Správci oblastí"
 
     def save(self, *args, **kwargs):
         if self.user.is_staff is False:
@@ -44,7 +54,7 @@ class Material(models.Model):
     ]
 
     name = models.CharField("název", max_length=1000)
-    region = models.ForeignKey(Region, on_delete=models.PROTECT)
+    region = models.ForeignKey(Region, verbose_name="oblast", on_delete=models.PROTECT)
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=ACTIVE, db_index=True
     )
@@ -53,6 +63,8 @@ class Material(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name = "Materiál"
+        verbose_name_plural = "Materiály"
 
     def __str__(self):
         return self.name
@@ -67,17 +79,21 @@ class Location(models.Model):
     ]
 
     name = models.CharField("název", max_length=1000)
-    region = models.ForeignKey(Region, on_delete=models.PROTECT)
+    region = models.ForeignKey(Region, verbose_name="oblast", on_delete=models.PROTECT)
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=ACTIVE, db_index=True
     )
     about = models.TextField("popis", null=True, blank=True)
     address = models.TextField("adresa", null=True, blank=True)
-    phone = models.CharField("telefon", max_length=20)
-    staff = models.ManyToManyField(settings.AUTH_USER_MODEL, through="LocationStaff",)
+    phone = models.CharField("telefon", max_length=20, null=True, blank=True)
+    staff = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, verbose_name="personál", through="LocationStaff",
+    )
 
     class Meta:
         ordering = ["region", "name"]
+        verbose_name = "Lokalita"
+        verbose_name_plural = "Lokality"
 
     def __str__(self):
         return f"{self.region} - {self.name}"
@@ -89,15 +105,24 @@ class LocationStaff(models.Model):
     VOLUNTEER = "volunteer"
     STATUS_CHOICES = [
         (PENDING, "čekatel"),
-        (ADMIN, "správce"),
+        (ADMIN, "koordinátor"),
         (VOLUNTEER, "dobrovolník"),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="uživatel", on_delete=models.CASCADE
+    )
+    location = models.ForeignKey(
+        Location, verbose_name="lokalita", on_delete=models.CASCADE
+    )
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=PENDING
     )
+
+    class Meta:
+        ordering = ["location", "user"]
+        verbose_name = "Personál lokality"
+        verbose_name_plural = "Personál lokality"
 
     def save(self, *args, **kwargs):
         if self.status == self.ADMIN and self.user.is_staff is False:
@@ -107,10 +132,16 @@ class LocationStaff(models.Model):
 
 
 class Dispensed(models.Model):
-    material = models.ForeignKey(Material, on_delete=models.PROTECT)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT)
-    region = models.ForeignKey(Region, on_delete=models.PROTECT)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    material = models.ForeignKey(
+        Material, verbose_name="materiál", on_delete=models.PROTECT
+    )
+    location = models.ForeignKey(
+        Location, verbose_name="lokalita", on_delete=models.PROTECT
+    )
+    region = models.ForeignKey(Region, verbose_name="oblast", on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="uživatel", on_delete=models.PROTECT
+    )
     quantity = models.IntegerField("množství")
     created = models.DateTimeField("vytvořeno", auto_now_add=True)
     changed = models.DateTimeField("upraveno", auto_now=True)
@@ -118,6 +149,8 @@ class Dispensed(models.Model):
 
     class Meta:
         ordering = ["created"]
+        verbose_name = "Výdej"
+        verbose_name_plural = "Výdeje"
 
 
 class MaterialRecord(models.Model):
@@ -130,10 +163,16 @@ class MaterialRecord(models.Model):
         (DISPENSED, "výdej"),
     ]
 
-    material = models.ForeignKey(Material, on_delete=models.PROTECT)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT)
-    region = models.ForeignKey(Region, on_delete=models.PROTECT)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    material = models.ForeignKey(
+        Material, verbose_name="materiál", on_delete=models.PROTECT
+    )
+    location = models.ForeignKey(
+        Location, verbose_name="lokalita", on_delete=models.PROTECT
+    )
+    region = models.ForeignKey(Region, verbose_name="oblast", on_delete=models.PROTECT)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="uživatel", on_delete=models.PROTECT
+    )
     quantity = models.IntegerField("množství")
     date = models.DateTimeField("datum", auto_now_add=True)
     operation = models.CharField(
@@ -142,3 +181,5 @@ class MaterialRecord(models.Model):
 
     class Meta:
         ordering = ["date"]
+        verbose_name = "Záznam materiálu"
+        verbose_name_plural = "Záznamy materiálů"
