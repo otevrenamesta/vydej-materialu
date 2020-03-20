@@ -1,5 +1,8 @@
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.db import models
+
+from .config import REGION_ADMIN
 
 
 class Region(models.Model):
@@ -36,12 +39,14 @@ class RegionAdmin(models.Model):
 
     class Meta:
         verbose_name = "Správce oblasti"
-        verbose_name_plural = "Správci oblastí"
+        verbose_name_plural = "Správci oblasti"
 
     def save(self, *args, **kwargs):
         if self.user.is_staff is False:
             self.user.is_staff = True
             self.user.save()
+
+        self.user.groups.add(Group.objects.get(name=REGION_ADMIN["group_name"]))
         super().save(*args, **kwargs)
 
 
