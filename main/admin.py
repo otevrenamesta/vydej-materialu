@@ -3,6 +3,9 @@ from django.contrib import admin
 from .models import Dispensed, Location, LocationStaff, Material, MaterialRecord, Region
 from .models import RegionAdmin as RegionAdminModel
 
+admin.site.site_header = "Administrace výdeje materiálu"
+admin.site.site_title = "Administrace výdeje materiálu"
+
 
 class RegionAdminInline(admin.TabularInline):
     model = RegionAdminModel

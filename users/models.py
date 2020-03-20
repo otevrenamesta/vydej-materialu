@@ -17,6 +17,11 @@ class User(AbstractUser):
         "status", max_length=10, choices=STATUS_CHOICES, default=PENDING, db_index=True
     )
 
+    class Meta:
+        ordering = ["username"]
+        verbose_name = "uživatel"
+        verbose_name_plural = "uživatelé"
+
     def save(self, *args, **kwargs):
         if self.status == self.ACTIVE:
             self.is_active = True
