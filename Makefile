@@ -21,3 +21,10 @@ migrations:
 
 migrate:
 	python manage.py migrate
+
+build:
+	docker build -t vydej-materialu:latest .
+
+release:
+	docker tag vydej-materialu:latest janbednarik/vydej-materialu:latest
+	docker push janbednarik/vydej-materialu:latest

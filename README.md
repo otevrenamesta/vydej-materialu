@@ -144,3 +144,15 @@ K upgrade se používají [pip-tools](https://github.com/jazzband/pip-tools) (`p
     $ pip-compile -U prod.in
 
 Tím se vygenerují `base.txt`, `dev.txt` a `prod.txt`
+
+## Docker
+
+Zatím provizorní řešení přes manuální build a push do Docker HUB.
+
+Build image s aplikací:
+
+    $ make build
+
+Push do Docker Hub:
+
+    $ make release
