@@ -98,6 +98,12 @@ class DispensedAdmin(admin.ModelAdmin):
             return ("region", "user", "created", "changed")
         return []
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(region__admins=request.user)
+
     def save_model(self, request, obj, form, change):
         obj.user = request.user
         super().save_model(request, obj, form, change)
@@ -133,6 +139,12 @@ class MaterialRecordAdmin(admin.ModelAdmin):
         if obj is not None:
             return ("region", "user", "date")
         return []
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(region__admins=request.user)
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
