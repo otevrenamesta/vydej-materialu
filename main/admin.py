@@ -89,17 +89,30 @@ class DispensedAdmin(admin.ModelAdmin):
 
     def get_exclude(self, request, obj=None):
         if obj is None:
-            return ("region", "user")
+            return ("region", "user", "created", "changed")
         return []
 
     def get_readonly_fields(self, request, obj=None):
         if obj is not None:
             return ("region", "user", "created", "changed")
-        return ("created", "changed")
+        return []
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
         super().save_model(request, obj, form, change)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "material":
+            if not request.user.is_superuser:
+                kwargs["queryset"] = Material.objects.filter(
+                    region__in=Region.objects.filter(admins=request.user)
+                )
+        if db_field.name == "location":
+            if not request.user.is_superuser:
+                kwargs["queryset"] = Location.objects.filter(
+                    region__in=Region.objects.filter(admins=request.user)
+                )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(MaterialRecord)
@@ -112,8 +125,8 @@ class MaterialRecordAdmin(admin.ModelAdmin):
 
     def get_exclude(self, request, obj=None):
         if obj is None:
-            return ("region", "user")
-        return []
+            return ("dispensed", "region", "user")
+        return ("dispensed",)
 
     def get_readonly_fields(self, request, obj=None):
         if obj is not None:
@@ -145,3 +158,13 @@ class MaterialRecordAdmin(admin.ModelAdmin):
                     region__in=Region.objects.filter(admins=request.user)
                 )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def has_change_permission(self, request, obj=None):
+        if obj is not None:
+            return obj.operation != MaterialRecord.DISPENSED
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        if obj is not None:
+            return obj.operation != MaterialRecord.DISPENSED
+        return super().has_delete_permission(request, obj)

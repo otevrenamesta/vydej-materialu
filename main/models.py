@@ -148,7 +148,7 @@ class Dispensed(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name="uživatel", on_delete=models.PROTECT
     )
-    quantity = models.IntegerField("množství")
+    quantity = models.PositiveIntegerField("množství")
     created = models.DateTimeField("vytvořeno", auto_now_add=True)
     changed = models.DateTimeField("upraveno", auto_now=True)
     id_card_no = models.CharField("číslo průkazu", max_length=100, db_index=True)
@@ -165,6 +165,20 @@ class Dispensed(models.Model):
     def save(self, *args, **kwargs):
         self.region = self.location.region
         super().save(*args, **kwargs)
+
+        if hasattr(self, "materialrecord"):
+            self.materialrecord.quantity = self.quantity
+            self.materialrecord.save()
+        else:
+            MaterialRecord.objects.create(
+                dispensed=self,
+                material=self.material,
+                location=self.location,
+                region=self.region,
+                user=self.user,
+                operation=MaterialRecord.DISPENSED,
+                quantity=self.quantity,
+            )
 
 
 class MaterialRecord(models.Model):
@@ -192,6 +206,7 @@ class MaterialRecord(models.Model):
     operation = models.CharField(
         "operace", max_length=10, choices=OPERATION_CHOICES, db_index=True
     )
+    dispensed = models.OneToOneField(Dispensed, on_delete=models.CASCADE, null=True)
 
     class Meta:
         ordering = ["-date"]
