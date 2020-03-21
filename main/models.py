@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from .config import REGION_ADMIN
@@ -67,12 +68,12 @@ class Material(models.Model):
     period = models.PositiveIntegerField("perioda výdeje", null=True, blank=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["name", "region"]
         verbose_name = "Materiál"
         verbose_name_plural = "Materiály"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.region})"
 
 
 class Location(models.Model):
@@ -101,7 +102,7 @@ class Location(models.Model):
         verbose_name_plural = "Lokality"
 
     def __str__(self):
-        return f"{self.region} - {self.name}"
+        return f"{self.name} ({self.region})"
 
 
 class LocationStaff(models.Model):
@@ -153,9 +154,17 @@ class Dispensed(models.Model):
     id_card_no = models.CharField("číslo průkazu", max_length=100, db_index=True)
 
     class Meta:
-        ordering = ["created"]
+        ordering = ["-created"]
         verbose_name = "Výdej"
         verbose_name_plural = "Výdeje"
+
+    def clean(self):
+        if self.material.region_id != self.location.region_id:
+            raise ValidationError("Nesouhlasí oblast materiálu a lokality.")
+
+    def save(self, *args, **kwargs):
+        self.region = self.location.region
+        super().save(*args, **kwargs)
 
 
 class MaterialRecord(models.Model):
@@ -185,6 +194,20 @@ class MaterialRecord(models.Model):
     )
 
     class Meta:
-        ordering = ["date"]
-        verbose_name = "Záznam materiálu"
-        verbose_name_plural = "Záznamy materiálů"
+        ordering = ["-date"]
+        verbose_name = "Záznam pohybu materiálu"
+        verbose_name_plural = "Záznamy pohybů materiálů"
+
+    def clean(self):
+        if self.material.region_id != self.location.region_id:
+            raise ValidationError("Nesouhlasí oblast materiálu a lokality.")
+
+    def save(self, *args, **kwargs):
+        self.region = self.location.region
+
+        if self.operation == self.RECEIVED:
+            self.quantity = abs(self.quantity)
+        else:
+            self.quantity = -abs(self.quantity)
+
+        super().save(*args, **kwargs)

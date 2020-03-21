@@ -17,6 +17,9 @@ REGION_ADMIN = {
         "add_materialrecord",
         "change_materialrecord",
         "view_materialrecord",
+        "add_dispensed",
+        "change_dispensed",
+        "view_dispensed",
     ],
 }
 
