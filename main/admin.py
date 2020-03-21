@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Q
 
 from .models import Dispensed, Location, LocationStaff, Material, MaterialRecord, Region
 from .models import RegionAdmin as RegionAdminModel
@@ -41,7 +42,9 @@ class MaterialAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(region__admins=request.user)
+        return qs.filter(
+            Q(region__admins=request.user) | Q(region__location__staff=request.user)
+        ).distinct()
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if not request.user.is_superuser and db_field.name == "region":
@@ -67,12 +70,21 @@ class LocationAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(region__admins=request.user)
+        return qs.filter(
+            Q(region__admins=request.user) | Q(staff=request.user)
+        ).distinct()
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if not request.user.is_superuser and db_field.name == "region":
             kwargs["queryset"] = Region.objects.filter(admins=request.user)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None and not (
+            request.user.is_superuser or request.user.is_region_admin
+        ):
+            return ("region",)
+        return []
 
 
 @admin.register(Dispensed)
@@ -102,7 +114,9 @@ class DispensedAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(region__admins=request.user)
+        return qs.filter(
+            Q(region__admins=request.user) | Q(location__staff=request.user)
+        ).distinct()
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -112,13 +126,14 @@ class DispensedAdmin(admin.ModelAdmin):
         if db_field.name == "material":
             if not request.user.is_superuser:
                 kwargs["queryset"] = Material.objects.filter(
-                    region__in=Region.objects.filter(admins=request.user)
-                )
+                    Q(region__admins=request.user)
+                    | Q(region__location__staff=request.user)
+                ).distinct()
         if db_field.name == "location":
             if not request.user.is_superuser:
                 kwargs["queryset"] = Location.objects.filter(
-                    region__in=Region.objects.filter(admins=request.user)
-                )
+                    Q(region__admins=request.user) | Q(staff=request.user)
+                ).distinct()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
@@ -144,7 +159,9 @@ class MaterialRecordAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
-        return qs.filter(region__admins=request.user)
+        return qs.filter(
+            Q(region__admins=request.user) | Q(location__staff=request.user)
+        ).distinct()
 
     def save_model(self, request, obj, form, change):
         obj.user = request.user
@@ -163,13 +180,14 @@ class MaterialRecordAdmin(admin.ModelAdmin):
         if db_field.name == "material":
             if not request.user.is_superuser:
                 kwargs["queryset"] = Material.objects.filter(
-                    region__in=Region.objects.filter(admins=request.user)
-                )
+                    Q(region__admins=request.user)
+                    | Q(region__location__staff=request.user)
+                ).distinct()
         if db_field.name == "location":
             if not request.user.is_superuser:
                 kwargs["queryset"] = Location.objects.filter(
-                    region__in=Region.objects.filter(admins=request.user)
-                )
+                    Q(region__admins=request.user) | Q(staff=request.user)
+                ).distinct()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def has_change_permission(self, request, obj=None):
