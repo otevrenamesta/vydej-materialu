@@ -14,4 +14,4 @@ class Command(BaseCommand):
             self.stdout.write(f" - {config['group_name']}")
             group, _ = Group.objects.get_or_create(name=config["group_name"])
             permissions = Permission.objects.filter(codename__in=config["permissions"])
-            group.permissions.add(*list(permissions))
+            group.permissions.set(list(permissions))

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from main.models import LocationStaff
+
 
 class User(AbstractUser):
     PENDING = "pending"
@@ -28,3 +30,31 @@ class User(AbstractUser):
         elif self.status == self.DISABLED:
             self.is_active = False
         super().save(*args, **kwargs)
+
+    @property
+    def is_region_admin(self):
+        if not hasattr(self, "_is_region_admin"):
+            self._is_region_admin = self.region_set.count() > 0
+        return self._is_region_admin
+
+    @property
+    def is_location_admin(self):
+        if not hasattr(self, "_is_location_admin"):
+            self._is_location_admin = (
+                self.location_set.filter(
+                    locationstaff__status=LocationStaff.ADMIN
+                ).count()
+                > 0
+            )
+        return self._is_location_admin
+
+    @property
+    def is_location_volunteer(self):
+        if not hasattr(self, "_is_location_volunteer"):
+            self._is_location_volunteer = (
+                self.location_set.filter(
+                    locationstaff__status=LocationStaff.VOLUNTEER
+                ).count()
+                > 0
+            )
+        return self._is_location_volunteer
