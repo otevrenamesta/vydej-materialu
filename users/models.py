@@ -58,3 +58,15 @@ class User(AbstractUser):
                 > 0
             )
         return self._is_location_volunteer
+
+    @property
+    def api_location(self):
+        """
+        Location selected for API usage. Value is set in API authentication
+        middleware based on ApiToken.
+        """
+        return getattr(self, "_api_location", None)
+
+    @api_location.setter
+    def api_location(self, location):
+        self._api_location = location

@@ -1,8 +1,9 @@
 import re
 
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.http import JsonResponse
+
+from .models import ApiToken
 
 
 class ApiTokenAuthMiddleware:
@@ -37,10 +38,13 @@ class ApiTokenAuthMiddleware:
             token = request.GET.get("token")
 
         if token is not None:
-            User = get_user_model()
             try:
-                request.user = User.objects.get(apitoken__token=token)
-            except User.DoesNotExist:
+                api_token = ApiToken.objects.select_related("user", "location").get(
+                    token=token
+                )
+                request.user = api_token.user
+                request.user.api_location = api_token.location
+            except ApiToken.DoesNotExist:
                 body = {
                     "result": "error",
                     "code": "invalid-token",

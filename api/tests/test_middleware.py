@@ -72,6 +72,7 @@ def test_auth_header_with_valid_token(request_factory, token_middleware, api_tok
     request.META.get.assert_called_once_with("HTTP_AUTHORIZATION")
     assert response == request
     assert response.user == api_token.user
+    assert response.user.api_location == api_token.location
 
 
 def test_url_param_with_invalid_token(request_factory, token_middleware, snapshot):
@@ -94,3 +95,4 @@ def test_url_param_with_valid_token(
     request.META.get.assert_called_once_with("HTTP_AUTHORIZATION")
     assert response == request
     assert response.user == api_token.user
+    assert response.user.api_location == api_token.location
