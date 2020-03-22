@@ -6,3 +6,5 @@ pytest-sugar
 pytest-factoryboy
 pytest-cov
 pytest-django
+pytest-mock
+snapshottest
