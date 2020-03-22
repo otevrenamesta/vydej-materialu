@@ -54,6 +54,12 @@ migrations: venv
 migrate: venv
 	${VENV}/bin/python manage.py migrate
 
+test:
+	${VENV}/bin/pytest
+
+coverage:
+	${VENV}/bin/pytest --cov --cov-report term-missing
+
 build:
 	docker build -t vydej-materialu:latest .
 

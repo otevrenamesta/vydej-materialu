@@ -109,6 +109,20 @@ Django shell používající `shell_plus` z Django extensions spustíte:
 
     $ make shell
 
+### Testy
+
+Používá se testovací framework [pytest](https://pytest.org). Spuštění testů:
+
+    $ pytest
+
+Případně přes `make`, ale bez možnosti parametrizovat spuštění testů:
+
+    $ make test
+
+Coverage report:
+
+    $ make coverage
+
 ### Code quality
 
 K formátování kódu se používá [black](https://github.com/psf/black). Doporučujeme

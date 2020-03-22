@@ -1,0 +1,3 @@
+[run]
+include = main/*, api/*, users/*
+omit = *migrations*, *tests*

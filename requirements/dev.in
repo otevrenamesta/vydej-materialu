@@ -1,3 +1,8 @@
 ipdb
 django-debug-toolbar
 django-extensions
+pytest
+pytest-sugar
+pytest-factoryboy
+pytest-cov
+pytest-django
