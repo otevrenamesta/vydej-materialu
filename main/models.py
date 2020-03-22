@@ -13,7 +13,7 @@ class Region(models.Model):
         (DISABLED, "pozastaveno"),
     ]
 
-    name = models.CharField("název", max_length=1000)
+    name = models.CharField("název", max_length=1000, unique=True)
     about = models.TextField("popis", null=True, blank=True)
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=ACTIVE, db_index=True
