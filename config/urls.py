@@ -3,11 +3,13 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
 
+import api.urls
 import main.urls
 
 urlpatterns = [
     path("", include(main.urls)),
-    path("admin/", admin.site.urls),
+    path(settings.API_URL, include(api.urls)),
+    path(settings.ADMIN_URL, admin.site.urls),
 ]
 
 if settings.DEBUG:

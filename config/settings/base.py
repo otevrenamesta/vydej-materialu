@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "users.apps.UsersConfig",
     "main.apps.MainConfig",
+    "api.apps.ApiConfig",
 ]
 
 # AUTHENTICATION
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "api.middleware.ApiTokenAuthMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -111,6 +113,10 @@ EMAIL_BACKEND = env(
 ADMIN_URL = "admin/"
 ADMINS = []
 MANAGERS = ADMINS
+
+# API
+# ------------------------------------------------------------------------------
+API_URL = "api/v1/"
 
 # LOGGING
 # ------------------------------------------------------------------------------
