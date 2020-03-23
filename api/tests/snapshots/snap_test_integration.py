@@ -33,13 +33,13 @@ snapshots['test_login__unknown_location 1'] = {
 
 snapshots['test_login__not_staff 1'] = {
     'code': 'invalid-location',
-    'message': 'Nejte přiřazen(a) k lokalitě. Kontaktujte koordinátora.',
+    'message': 'Nejste přiřazen(a) k lokalitě. Kontaktujte koordinátora.',
     'result': 'error'
 }
 
 snapshots['test_login__staff_pending 1'] = {
     'code': 'invalid-location',
-    'message': 'Nejte přiřazen(a) k lokalitě. Kontaktujte koordinátora.',
+    'message': 'Nejste přiřazen(a) k lokalitě. Kontaktujte koordinátora.',
     'result': 'error'
 }
 
@@ -73,4 +73,44 @@ snapshots['test_material__not_staff 1'] = {
     'code': 'invalid-token',
     'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
     'result': 'error'
+}
+
+snapshots['test_dispense__no_token 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_dispense__not_staff 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_dispense__wrong_payload 1'] = {
+    'code': 'invalid-request',
+    'message': 'Nelze přečíst payload requestu.',
+    'result': 'error'
+}
+
+snapshots['test_dispense__wrong_material 1'] = {
+    'code': 'invalid-request',
+    'message': 'Špatné ID materiálu nebo materiál není v lokalitě dostupný.',
+    'result': 'error'
+}
+
+snapshots['test_dispense__missing_id_card_no 1'] = {
+    'code': 'invalid-request',
+    'message': 'Chybí číslo průkazu.',
+    'result': 'error'
+}
+
+snapshots['test_dispense__zero_quantity 1'] = {
+    'code': 'invalid-request',
+    'message': 'Množství materiálu musí být větší než 0.',
+    'result': 'error'
+}
+
+snapshots['test_dispense 1'] = {
+    'result': 'success'
 }

@@ -7,7 +7,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from api.models import ApiToken
-from main.models import Location, LocationStaff, Material, MaterialRecord
+from main.models import Dispensed, Location, LocationStaff, Material, MaterialRecord
 
 
 class ApiStaffRequiredMixin:
@@ -32,18 +32,22 @@ class ApiStaffRequiredMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
+def invalid_body_response():
+    response = {
+        "result": "error",
+        "code": "invalid-request",
+        "message": "Nelze přečíst payload requestu.",
+    }
+    return JsonResponse(response, status=400)
+
+
 @method_decorator(csrf_exempt, name="dispatch")
 class LoginView(View):
     def post(self, request, *args, **kwargs):
         try:
             body = json.loads(request.body)
         except json.decoder.JSONDecodeError:
-            response = {
-                "result": "error",
-                "code": "invalid-request",
-                "message": "Nelze přečíst payload requestu.",
-            }
-            return JsonResponse(response, status=400)
+            return invalid_body_response()
 
         user = authenticate(username=body.get("login"), password=body.get("password"))
         if user is None:
@@ -68,7 +72,7 @@ class LoginView(View):
             response = {
                 "result": "error",
                 "code": "invalid-location",
-                "message": "Nejte přiřazen(a) k lokalitě. Kontaktujte koordinátora.",
+                "message": "Nejste přiřazen(a) k lokalitě. Kontaktujte koordinátora.",
             }
             return JsonResponse(response, status=401)
 
@@ -88,4 +92,57 @@ class MaterialView(ApiStaffRequiredMixin, View):
             "result": "success",
             "material": [{"id": m.id, "name": m.name} for m in materials],
         }
+        return JsonResponse(response)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class DispenseView(ApiStaffRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            body = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return invalid_body_response()
+
+        id_card_no = body.get("idcardno")
+        if not id_card_no:
+            response = {
+                "result": "error",
+                "code": "invalid-request",
+                "message": "Chybí číslo průkazu.",
+            }
+            return JsonResponse(response, status=400)
+
+        for item in body.get("material", []):
+            try:
+                material = Material.objects.get(
+                    id=int(item.get("id", 0)),
+                    materialrecord__location=request.user.api_location,
+                    materialrecord__operation=MaterialRecord.RECEIVED,
+                )
+            except Material.DoesNotExist:
+                response = {
+                    "result": "error",
+                    "code": "invalid-request",
+                    "message": "Špatné ID materiálu nebo materiál není v lokalitě dostupný.",
+                }
+                return JsonResponse(response, status=400)
+
+            quantity = int(item.get("quantity", 0))
+            if quantity <= 0:
+                response = {
+                    "result": "error",
+                    "code": "invalid-request",
+                    "message": "Množství materiálu musí být větší než 0.",
+                }
+                return JsonResponse(response, status=400)
+
+            Dispensed.objects.create(
+                material=material,
+                user=request.user,
+                location=request.user.api_location,
+                quantity=quantity,
+                id_card_no=id_card_no,
+            )
+
+        response = {"result": "success"}
         return JsonResponse(response)

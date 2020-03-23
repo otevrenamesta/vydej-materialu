@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 from faker import Faker
 
-from main.models import LocationStaff
+from main.models import Dispensed, LocationStaff
 
 pytestmark = pytest.mark.django_db
 
@@ -176,3 +176,119 @@ def test_material(client, snapshot, material_record_factory, staff):
 
     assert response.status_code == 200
     snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense__no_token(client, snapshot):
+    response = client.post(reverse("api:dispense"))
+
+    assert response.status_code == 401
+    snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense__not_staff(client, snapshot, api_token):
+    response = client.post(reverse("api:dispense"), HTTP_AUTHORIZATION=api_token.header)
+
+    assert response.status_code == 401
+    snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense__wrong_payload(client, snapshot, staff):
+    response = client.post(
+        reverse("api:dispense"),
+        "abc",
+        "text/plain",
+        HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 400
+    snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense__wrong_material(client, snapshot, staff, material_record_factory):
+    material_record_factory(location=staff.location, material__id=1)
+    material_record_factory(material__id=2)
+    payload = {"idcardno": "123456", "material": [{"id": 2, "quantity": 5}]}
+
+    response = client.post(
+        reverse("api:dispense"),
+        payload,
+        "application/json",
+        HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 400
+    snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense__missing_id_card_no(client, snapshot, staff, material_record_factory):
+    material_record_factory(location=staff.location, material__id=1)
+    payload = {"idcardno": None, "material": [{"id": 1, "quantity": 5}]}
+
+    response = client.post(
+        reverse("api:dispense"),
+        payload,
+        "application/json",
+        HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 400
+    snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense__zero_quantity(client, snapshot, staff, material_record_factory):
+    material_record_factory(location=staff.location, material__id=1)
+    payload = {"idcardno": "123456", "material": [{"id": 1, "quantity": 0}]}
+
+    response = client.post(
+        reverse("api:dispense"),
+        payload,
+        "application/json",
+        HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 400
+    snapshot.assert_match(json.loads(response.content))
+
+
+def test_dispense(client, snapshot, staff, material_record_factory):
+    m1 = material_record_factory(
+        location=staff.location, material__region=staff.location.region
+    )
+    m2 = material_record_factory(
+        location=staff.location, material__region=staff.location.region
+    )
+    id_card_no = fake.ssn()
+    payload = {
+        "idcardno": id_card_no,
+        "material": [
+            {"id": m1.material.id, "quantity": 5},
+            {"id": m2.material.id, "quantity": 10},
+        ],
+    }
+
+    response = client.post(
+        reverse("api:dispense"),
+        payload,
+        "application/json",
+        HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 200
+    snapshot.assert_match(json.loads(response.content))
+    assert Dispensed.objects.count() == 2
+    assert Dispensed.objects.filter(
+        material=m1.material,
+        region=m1.material.region,
+        location=staff.location,
+        user=staff.user,
+        id_card_no=id_card_no,
+        quantity=5,
+    ).exists()
+    assert Dispensed.objects.filter(
+        material=m2.material,
+        region=m2.material.region,
+        location=staff.location,
+        user=staff.user,
+        id_card_no=id_card_no,
+        quantity=10,
+    ).exists()
