@@ -137,6 +137,14 @@ class LocationStaff(models.Model):
         super().delete(*args, **kwargs)
         setup_user_permissons(self.user)
 
+    @classmethod
+    def is_assigned(cls, user, location):
+        return (
+            cls.objects.filter(user=user, location=location)
+            .exclude(status=LocationStaff.PENDING)
+            .exists()
+        )
+
 
 class Dispensed(models.Model):
     material = models.ForeignKey(

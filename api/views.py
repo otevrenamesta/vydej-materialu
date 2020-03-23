@@ -42,11 +42,7 @@ class LoginView(View):
             }
             return JsonResponse(response, status=404)
 
-        if not (
-            LocationStaff.objects.filter(user=user, location=location)
-            .exclude(status=LocationStaff.PENDING)
-            .exists()
-        ):
+        if not LocationStaff.is_assigned(user, location):
             response = {
                 "result": "error",
                 "code": "invalid-location",
