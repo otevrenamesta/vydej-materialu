@@ -2,12 +2,15 @@ import json
 
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
 from api.models import ApiToken
 from main.models import Location, LocationStaff
 
 
+@method_decorator(csrf_exempt, name="dispatch")
 class LoginView(View):
     def post(self, request, *args, **kwargs):
         try:
