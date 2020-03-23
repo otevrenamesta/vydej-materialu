@@ -7,7 +7,7 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 
 from api.models import ApiToken
-from main.models import Location, LocationStaff
+from main.models import Location, LocationStaff, Material, MaterialRecord
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -52,4 +52,30 @@ class LoginView(View):
 
         token = ApiToken.objects.create(user=user, location=location)
         response = {"result": "success", "token": token.token}
+        return JsonResponse(response)
+
+
+class MaterialView(View):
+    def get(self, request, *args, **kwargs):
+        if (
+            not request.user.is_authenticated
+            or request.user.api_location is None
+            or not LocationStaff.is_assigned(request.user, request.user.api_location)
+        ):
+            response = {
+                "result": "error",
+                "code": "invalid-token",
+                "message": "Problém s ověřením identity. Kontaktujte koordinátora.",
+            }
+            return JsonResponse(response, status=401)
+
+        materials = Material.objects.filter(
+            materialrecord__location=request.user.api_location,
+            materialrecord__operation=MaterialRecord.RECEIVED,
+        )
+
+        response = {
+            "result": "success",
+            "material": [{"id": m.id, "name": m.name} for m in materials],
+        }
         return JsonResponse(response)

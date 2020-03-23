@@ -12,3 +12,8 @@ class ApiTokenFactory(DjangoModelFactory):
 
     class Meta:
         model = ApiToken
+
+    @classmethod
+    def _after_postgeneration(cls, obj, create, results=None):
+        super()._after_postgeneration(obj, create, results)
+        obj.header = f"Bearer {obj.token}"

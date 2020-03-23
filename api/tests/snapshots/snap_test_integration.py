@@ -42,3 +42,35 @@ snapshots['test_login__staff_pending 1'] = {
     'message': 'Nejte přiřazen(a) k lokalitě. Kontaktujte koordinátora.',
     'result': 'error'
 }
+
+snapshots['test_material__nothing_available 1'] = {
+    'material': [
+    ],
+    'result': 'success'
+}
+
+snapshots['test_material__no_token 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_material 1'] = {
+    'material': [
+        {
+            'id': 2,
+            'name': 'Respirátor'
+        },
+        {
+            'id': 1,
+            'name': 'Rouška'
+        }
+    ],
+    'result': 'success'
+}
+
+snapshots['test_material__not_staff 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
