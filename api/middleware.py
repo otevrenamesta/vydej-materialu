@@ -30,7 +30,7 @@ class ApiTokenAuthMiddleware:
             else:
                 body = {
                     "result": "error",
-                    "code": "bad-request",
+                    "code": "invalid-request",
                     "message": 'Špatná autentifikační HTTP hlavička. Očekává se: "Bearer <token>"',
                 }
                 return JsonResponse(body, status=400)
