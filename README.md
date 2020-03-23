@@ -21,6 +21,17 @@ V produkci musí být navíc nastaveno:
 | `DJANGO_SECRET_KEY` | | tajný šifrovací klíč |
 | `DJANGO_ALLOWED_HOSTS` | | allowed hosts (více hodnot odděleno čárkami) |
 
+## Management projektu
+
+### Command load_groups
+
+Do databáze je třeba nahrát předdefinované uživatelské skupiny s oprávněními.
+K tomu slouží management command `load_groups`:
+
+    $ python manage.py load_groups
+
+Tento command se v Docker kontejneru pouští automaticky před startem serveru.
+
 ## Vývoj
 
 Pro vývoj je definován pomocný `Makefile` pro časté akce.
