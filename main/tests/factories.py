@@ -2,7 +2,7 @@ from factory import DjangoModelFactory, Faker, SubFactory
 
 from users.tests.factories import UserFactory
 
-from ..models import Location, LocationStaff, Region
+from ..models import Location, LocationStaff, Material, MaterialRecord, Region
 
 
 class RegionFactory(DjangoModelFactory):
@@ -32,3 +32,23 @@ class LocationStaffFactory(DjangoModelFactory):
 
     class Meta:
         model = LocationStaff
+
+
+class MaterialFactory(DjangoModelFactory):
+    name = Faker("company")
+    region = SubFactory(RegionFactory)
+
+    class Meta:
+        model = Material
+
+
+class MaterialRecordFactory(DjangoModelFactory):
+    material = SubFactory(MaterialFactory)
+    location = SubFactory(LocationFactory)
+    region = SubFactory(RegionFactory)
+    user = SubFactory(UserFactory)
+    quantity = Faker("random_int")
+    operation = MaterialRecord.RECEIVED
+
+    class Meta:
+        model = MaterialRecord
