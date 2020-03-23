@@ -3,11 +3,12 @@ from django.core.management import call_command
 from pytest_factoryboy import register
 
 from api.tests.factories import ApiTokenFactory
-from main.tests.factories import LocationFactory, RegionFactory
+from main.tests.factories import LocationFactory, LocationStaffFactory, RegionFactory
 from users.tests.factories import UserFactory
 
 register(ApiTokenFactory)
 register(LocationFactory)
+register(LocationStaffFactory)
 register(RegionFactory)
 register(UserFactory)
 
