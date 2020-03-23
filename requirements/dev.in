@@ -7,4 +7,5 @@ pytest-factoryboy
 pytest-cov
 pytest-django
 pytest-mock
+pytest-only
 snapshottest
