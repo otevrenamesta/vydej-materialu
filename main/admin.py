@@ -33,7 +33,7 @@ class RegionAdmin(admin.ModelAdmin):
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ("name", "region", "status")
+    list_display = ("name", "region", "status", "limit", "period")
     list_filter = ("status", "region")
     radio_fields = {"status": admin.HORIZONTAL}
     search_fields = ("name", "region__name")
