@@ -225,7 +225,7 @@ def test_dispense__wrong_material(client, snapshot, staff, material_record_facto
 
 def test_dispense__missing_id_card_no(client, snapshot, staff, material_record_factory):
     material_record_factory(location=staff.location, material__id=1)
-    payload = {"idcardno": None, "material": [{"id": 1, "quantity": 5}]}
+    payload = {"material": [{"id": 1, "quantity": 5}]}
 
     response = client.post(
         reverse("api:dispense"),
@@ -313,7 +313,7 @@ def test_validate__full_limit(client, snapshot, material_record_factory, staff):
         material__name="Rouška",
     )
     material_record_factory(material__id=3)
-    payload = {"id_card_no": randint(0, 10 ** 11)}
+    payload = {"idcardno": randint(0, 10 ** 11)}
 
     response = client.post(
         reverse("api:validate"),

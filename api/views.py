@@ -1,5 +1,6 @@
 import json
 
+import jsonschema
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -32,24 +33,60 @@ class ApiStaffRequiredMixin:
         return super().dispatch(request, *args, **kwargs)
 
 
-def invalid_body_response():
-    response = {
-        "result": "error",
-        "code": "invalid-request",
-        "message": "Nelze přečíst payload requestu.",
-    }
-    return JsonResponse(response, status=400)
+class ApiRequestValidationMixin:
+    """
+    Mixin checking that the request body is a valid JSON conforming to
+    a defined JSON schema. Passes on the `body` keyword argument.
+    The schema is expected to be found in the `request_schema` property.
+    """
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.method != "POST":
+            return super().dispatch(request, *args, **kwargs)
 
-@method_decorator(csrf_exempt, name="dispatch")
-class LoginView(View):
-    def post(self, request, *args, **kwargs):
         try:
             body = json.loads(request.body)
         except json.decoder.JSONDecodeError:
-            return invalid_body_response()
+            response = {
+                "result": "error",
+                "code": "invalid-request",
+                "message": "Nelze přečíst payload requestu.",
+            }
+            return JsonResponse(response, status=400)
 
-        user = authenticate(username=body.get("login"), password=body.get("password"))
+        try:
+            jsonschema.validate(body, self.request_schema)
+        except jsonschema.ValidationError as err:
+            path = "/".join([str(pc) for pc in err.absolute_path])
+            response = {
+                "result": "error",
+                "code": "invalid-request",
+                "message": f"/{path}: {err.message}",
+            }
+            return JsonResponse(response, status=400)
+
+        return super().dispatch(request, *args, body=body, **kwargs)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class LoginView(ApiRequestValidationMixin, View):
+    request_schema = {
+        "type": "object",
+        "properties": {
+            "login": {"type": "string"},
+            "password": {"type": "string"},
+            "location": {
+                "oneOf": [
+                    {"type": "integer", "minimum": 0},
+                    {"type": "string", "regex": "^[0-9]+$"},
+                ],
+            },
+        },
+        "required": ["login", "password", "location"],
+    }
+
+    def post(self, request, body, *args, **kwargs):
+        user = authenticate(username=body["login"], password=body["password"])
         if user is None:
             response = {
                 "result": "error",
@@ -59,7 +96,7 @@ class LoginView(View):
             return JsonResponse(response, status=401)
 
         try:
-            location = Location.objects.get(id=int(body.get("location")))
+            location = Location.objects.get(id=int(body["location"]))
         except Location.DoesNotExist:
             response = {
                 "result": "error",
@@ -93,26 +130,47 @@ class MaterialView(ApiStaffRequiredMixin, View):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class DispenseView(ApiStaffRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        try:
-            body = json.loads(request.body)
-        except json.decoder.JSONDecodeError:
-            return invalid_body_response()
+class DispenseView(ApiStaffRequiredMixin, ApiRequestValidationMixin, View):
+    request_schema = {
+        "type": "object",
+        "properties": {
+            "idcardno": {
+                "oneOf": [
+                    {"type": "integer", "minimum": 0},
+                    {"type": "string", "regex": "^[0-9]+$"},
+                ],
+            },
+            "material": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "integer", "minimum": 0},
+                        "quantity": {"type": "integer", "minimum": 0},
+                    },
+                    "required": ["id", "quantity"],
+                },
+            },
+        },
+        "required": ["idcardno"],
+    }
 
-        id_card_no = body.get("idcardno")
-        if not isinstance(id_card_no, int):
+    def post(self, request, body, *args, **kwargs):
+        id_card_no = int(body["idcardno"])
+
+        total = sum([item["quantity"] for item in body.get("material", [])])
+        if total <= 0:
             response = {
                 "result": "error",
                 "code": "invalid-request",
-                "message": "Číslo dokladu chybí nebo není platné.",
+                "message": "Množství materiálu musí být větší než 0.",
             }
             return JsonResponse(response, status=400)
 
         for item in body.get("material", []):
             try:
                 material = Material.objects.get(
-                    id=int(item.get("id", 0)),
+                    id=item["id"],
                     materialrecord__location=request.user.api_location,
                     materialrecord__operation=MaterialRecord.RECEIVED,
                 )
@@ -124,20 +182,11 @@ class DispenseView(ApiStaffRequiredMixin, View):
                 }
                 return JsonResponse(response, status=400)
 
-            quantity = int(item.get("quantity", 0))
-            if quantity <= 0:
-                response = {
-                    "result": "error",
-                    "code": "invalid-request",
-                    "message": "Množství materiálu musí být větší než 0.",
-                }
-                return JsonResponse(response, status=400)
-
             Dispensed.objects.create(
                 material=material,
                 user=request.user,
                 location=request.user.api_location,
-                quantity=quantity,
+                quantity=item["quantity"],
                 id_card_no=id_card_no,
             )
 
@@ -146,14 +195,27 @@ class DispenseView(ApiStaffRequiredMixin, View):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class ValidateView(ApiStaffRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        try:
-            body = json.loads(request.body)
-        except json.decoder.JSONDecodeError:
-            return invalid_body_response()
+class ValidateView(ApiStaffRequiredMixin, ApiRequestValidationMixin, View):
+    request_schema = {
+        "type": "object",
+        "properties": {
+            "idcardno": {
+                "oneOf": [
+                    {"type": "integer", "minimum": 0},
+                    {"type": "string", "regex": "^[0-9]+$"},
+                ],
+            },
+        },
+        "required": ["idcardno"],
+    }
 
+    def post(self, request, body, *args, **kwargs):
         materials = Material.get_available(location=request.user.api_location)
+
+        # TODO: Check that the ID is not blacklisted or stolen.
+        id_card_no = int(body["idcardno"])
+
+        # TODO: Adjust limits according to the specification.
 
         response = {
             "result": "success",
