@@ -38,7 +38,7 @@ def test_get__not_staff(client, snapshot, api_token, url):
     snapshot.assert_match(json.loads(response.content))
 
 
-@pytest.mark.parametrize("url", ["api:dispense"])
+@pytest.mark.parametrize("url", ["api:dispense", "api:validate"])
 def test_post__no_token(client, snapshot, url):
     response = client.post(reverse(url))
 
@@ -46,7 +46,7 @@ def test_post__no_token(client, snapshot, url):
     snapshot.assert_match(json.loads(response.content))
 
 
-@pytest.mark.parametrize("url", ["api:dispense"])
+@pytest.mark.parametrize("url", ["api:dispense", "api:validate"])
 def test_post__not_staff(client, snapshot, api_token, url):
     response = client.post(reverse(url), HTTP_AUTHORIZATION=api_token.header)
 
@@ -54,7 +54,7 @@ def test_post__not_staff(client, snapshot, api_token, url):
     snapshot.assert_match(json.loads(response.content))
 
 
-@pytest.mark.parametrize("url", ["api:dispense"])
+@pytest.mark.parametrize("url", ["api:dispense", "api:validate"])
 def test_post__wrong_payload(client, snapshot, staff, url):
     response = client.post(
         reverse(url), "abc", "text/plain", HTTP_AUTHORIZATION=staff.api_token.header,
@@ -294,3 +294,24 @@ def test_dispense(client, snapshot, staff, material_record_factory):
         id_card_no=id_card_no,
         quantity=10,
     ).exists()
+
+
+def test_validate__full_limit(client, snapshot, material_record_factory, staff):
+    material_record_factory(
+        location=staff.location, material__id=1, material__limit=10, material__period=5,
+    )
+    material_record_factory(
+        location=staff.location, material__id=2, material__limit=2, material__period=7,
+    )
+    material_record_factory(material__id=3)
+    payload = {"id_card_no": fake.ssn()}
+
+    response = client.post(
+        reverse("api:validate"),
+        payload,
+        "application/json",
+        HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 200
+    snapshot.assert_match(json.loads(response.content))

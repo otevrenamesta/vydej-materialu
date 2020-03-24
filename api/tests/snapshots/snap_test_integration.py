@@ -114,3 +114,36 @@ snapshots['test_get__not_staff[api:material] 1'] = {
     'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
     'result': 'error'
 }
+
+snapshots['test_post__no_token[api:validate] 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_post__not_staff[api:validate] 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_post__wrong_payload[api:validate] 1'] = {
+    'code': 'invalid-request',
+    'message': 'Nelze přečíst payload requestu.',
+    'result': 'error'
+}
+
+snapshots['test_validate__full_limit 1'] = {
+    'limits': [
+        {
+            'id': 1,
+            'limit': 10.0
+        },
+        {
+            'id': 2,
+            'limit': 2.0
+        }
+    ],
+    'message': 'V pořádku.',
+    'result': 'success'
+}

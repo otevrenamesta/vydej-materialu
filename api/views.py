@@ -83,10 +83,7 @@ class LoginView(View):
 
 class MaterialView(ApiStaffRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        materials = Material.objects.filter(
-            materialrecord__location=request.user.api_location,
-            materialrecord__operation=MaterialRecord.RECEIVED,
-        )
+        materials = Material.get_available(location=request.user.api_location)
 
         response = {
             "result": "success",
@@ -145,4 +142,22 @@ class DispenseView(ApiStaffRequiredMixin, View):
             )
 
         response = {"result": "success"}
+        return JsonResponse(response)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class ValidateView(ApiStaffRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:
+            body = json.loads(request.body)
+        except json.decoder.JSONDecodeError:
+            return invalid_body_response()
+
+        materials = Material.get_available(location=request.user.api_location)
+
+        response = {
+            "result": "success",
+            "message": "V pořádku.",
+            "limits": [{"id": m.id, "limit": m.limit} for m in materials],
+        }
         return JsonResponse(response)

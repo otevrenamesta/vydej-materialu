@@ -74,6 +74,13 @@ class Material(models.Model):
     def __str__(self):
         return f"{self.name} ({self.region})"
 
+    @classmethod
+    def get_available(cls, location):
+        return cls.objects.filter(
+            materialrecord__location=location,
+            materialrecord__operation=MaterialRecord.RECEIVED,
+        )
+
 
 class Location(models.Model):
     ACTIVE = "active"
