@@ -1,0 +1,88 @@
+{% extends "main/base.html" %}
+{% block title %}Výdej{% endblock title %}
+{% block content %}
+
+<h2 class="h5 mt-4 mb-2">Úprava záznamu</h2>
+
+<form method="GET" action="02b-accepted.html" autocomplete="off">
+  <table class="table table-sm">
+    <tr>
+      <td class="align-middle">
+        <label for="idcardno">Číslo dokladu</label>
+      </td>
+      <td colspan="3">
+        <input class="form-control text-monospace"
+               type="number" min="0" max="999999999" step="1"
+               id="idcardno" name="idcardno"
+               value="123456789"
+               tabindex="1">
+      </td>
+    </tr>
+    <tr>
+      <td class="align-middle">
+        Respirátor FFP2
+      </td>
+      <td style="width: 0">
+        <button class="btn btn-danger"
+                tabindex="-1"
+                data-decrement="#material10">
+          <i class="fa fa-minus"></i>
+        </button>
+      </td>
+      <td style="width: 40px">
+        <input class="form-control"
+               type="number" min="0" step="1" value="5"
+               style="width: 5em"
+               id="material10" name="material10"
+               tabindex="1">
+      </td>
+      <td style="width: 0">
+        <button class="btn btn-success"
+                tabindex="-1"
+                data-increment="#material10">
+          <i class="fa fa-plus"></i>
+        </button>
+      </td>
+    </tr>
+
+    <tr>
+      <td class="align-middle">
+        Ústenka
+      </td>
+      <td style="width: 0">
+        <button class="btn btn-danger"
+                tabindex="-1"
+                data-decrement="#material13">
+          <i class="fa fa-minus"></i>
+        </button>
+      </td>
+      <td style="width: 40px">
+        <input class="form-control"
+               type="number" min="0" step="1" value="25"
+               style="width: 5em"
+               id="material13" name="material13"
+               tabindex="1">
+      </td>
+      <td style="width: 0">
+        <button class="btn btn-success"
+                tabindex="-1"
+                data-increment="#material13">
+          <i class="fa fa-plus"></i>
+        </button>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="2"></td>
+      <td>
+        <button type="submit"
+                class="btn btn-primary mt-2"
+                style="width: 100%"
+                tabindex="2">Uložit</button>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</form>
+
+{% endblock content %}

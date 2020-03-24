@@ -1,0 +1,38 @@
+{% extends "main/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Výdej{% endblock title %}
+{% block content %}
+
+<h2 class="h5 mt-4">Ověření dokladu</h2>
+
+{% crispy form %}
+
+<h2 class="h5">Historie</h2>
+
+<table class="table table-sm">
+
+  <tr>
+    <th>datum</th>
+    <th>číslo dokladu</th>
+    <th>materiál</th>
+    <th>množství</th>
+    <th></th>
+  </tr>
+
+  {% for disp in dispensed %}
+  <tr>
+    <td class="align-middle">{{ disp.created }}</td>
+    <td class="align-middle">{{ disp.id_card_no }}</td>
+    <td class="align-middle">{{ disp.material.name }}</td>
+    <td class="align-middle">{{ disp.quantity }}</td>
+    <td style="width: 0">
+      <!-- <a href="{% url 'main:dispense_edit' pk=disp.pk %}" class="btn btn-sm btn-primary" tabindex="3">
+        <i class="fa fa-edit" aria-hidden="true"></i>
+      </a>-->
+    </td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endblock content %}

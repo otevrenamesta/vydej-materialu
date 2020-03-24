@@ -29,8 +29,11 @@
         <div class="container">
           <a class="navbar-brand" href="{% url 'main:home' %}"><i class="fas fa-plus-square mr-2"></i> Výdej materiálu</a>
           <div class="navbar-nav mr-auto">
-            <a class="nav-item nav-link" href="{% url 'main:home' %}">home</a>
+            <a class="nav-item nav-link" href="{% url 'main:dispense' %}">výdej</a>
             <a class="nav-item nav-link" href="{% url 'admin:index' %}">správa</a>
+            {% if request.user.is_authenticated %}
+              <a class="nav-item nav-link" href="{% url 'main:logout' %}">odhlásit</a>
+            {% endif %}
           </div>
         </div>
       </nav>

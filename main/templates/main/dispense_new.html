@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Výdej{% endblock title %}
+{% block content %}
+
+<h2 class="h5 mt-4">OP {{ id_card_no }}</h2>
+
+<h2 class="h5 my-2">Záznam o výdeji</h2>
+
+{% crispy form %}
+
+{% endblock content %}
