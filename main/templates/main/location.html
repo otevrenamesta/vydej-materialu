@@ -1,0 +1,97 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{object.name}}{% endblock title %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url "main:region_list" %}">Oblasti</a>
+    </li>
+    <li class="breadcrumb-item">
+      <a href="{% url "main:region" object.region.id %}">{{object.region.name}}</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      {{object.name}}
+    </li>
+  </ol>
+</nav>
+
+<h5>Výdejní lokalita #{{object.id}}</h5>
+<table class="table table-sm table-bordered">
+  <tr>
+    <th style="width: 10em">Název lokality</th>
+    <td>{{object.name}}</td>
+  </tr>
+
+  <tr>
+    <th>Telefonní číslo</th>
+    {% if object.phone %}
+    <td>{{object.phone}}</td>
+    {% else %}
+    <td><i>není uvedeno</i></td>
+    {% endif %}
+  </tr>
+
+  <tr>
+    <th>Adresa</th>
+    {% if object.addres %}
+    <td>{{object.address|linebreaksbr}}</td>
+    {% else %}
+    <td><i>není uvedena</i></td>
+    {% endif %}
+  </tr>
+
+  <tr>
+    <th>Personál</th>
+    <td>
+      <div>
+        {% with cnt=admins.count %}
+        {% if cnt == 1 %}
+        {{cnt}} koordinátor
+        {% elif cnt <= 4 and cnt > 1 %}
+        {{cnt}} koordinátoři
+        {% else %}
+        {{cnt}} koordinátorů
+        {% endif %}
+        {% endwith %}
+      </div>
+
+      <div>
+        {% with cnt=volunteers.count %}
+        {% if cnt == 1 %}
+        {{cnt}} dobrovolník
+        {% elif cnt <= 4 and cnt > 1 %}
+        {{cnt}} dobrovolníci
+        {% else %}
+        {{cnt}} dobrovolníků
+        {% endif %}
+        {% endwith %}
+      </div>
+
+      <div>
+        {% with cnt=pending.count %}
+        {% if cnt == 1 %}
+        {{cnt}} čekatel
+        {% elif cnt <= 4 and cnt > 1 %}
+        {{cnt}} čekatelé
+        {% else %}
+        {{cnt}} čekatelů
+        {% endif %}
+        {% endwith %}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<h5>Popis</h5>
+<div class="description">
+  {% if object.description %}
+  {{object.description|linebreaks}}
+  {% else %}
+  <i>není uveden</i>
+  {% endif %}
+</div>
+
+{% endblock content %}

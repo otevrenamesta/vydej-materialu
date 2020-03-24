@@ -2,14 +2,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import TemplateView, UpdateView, View
+from django.views.generic import DetailView, ListView, TemplateView, UpdateView, View
 
 from .forms import DispensedForm, DispenseNewForm, DispenseStartForm, LoginForm
-from .models import Dispensed, Material
+from .models import Dispensed, Location, LocationStaff, Material, Region
 
 
-class HomeView(TemplateView):
-    template_name = "main/home.html"
+class AboutView(TemplateView):
+    template_name = "main/about.html"
 
 
 class RegistrationView(TemplateView):
@@ -111,3 +111,39 @@ class DispenseEditView(LoginRequiredMixin, UpdateView):
     model = Dispensed
     form_class = DispensedForm
     template_name = "main/dispense_edit.html"
+
+
+class RegionListView(ListView):
+    template_name = "main/region-list.html"
+    model = Region
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(status=Region.ACTIVE)
+
+
+class RegionView(DetailView):
+    template_name = "main/region.html"
+    model = Region
+    slug_field = "id"
+    slug_url_kwarg = "id"
+
+
+class LocationView(DetailView):
+    template_name = "main/location.html"
+    model = Location
+    slug_field = "id"
+    slug_url_kwarg = "id"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["volunteers"] = self.object.staff.filter(
+            locationstaff__status=LocationStaff.VOLUNTEER
+        )
+        ctx["admins"] = self.object.staff.filter(
+            locationstaff__status=LocationStaff.ADMIN
+        )
+        ctx["pending"] = self.object.staff.filter(
+            locationstaff__status=LocationStaff.PENDING
+        )
+        return ctx

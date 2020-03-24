@@ -1,0 +1,38 @@
+{% extends "main/base.html" %}
+
+{% block title %}{{object.name}}{% endblock title %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url "main:region_list" %}">Oblasti</a>
+    </li>
+    <li class="breadcrumb-item active">
+      {{object.name}}
+    </li>
+  </ol>
+</nav>
+
+<h5 class="mt-4">Lokality</h5>
+<p>
+  Výdej materiálu pro&nbsp;oblast <strong>{{object.name}}</strong> probíhá
+  v&nbsp;níže uvedených lokalitách:
+</p>
+
+<table class="table table-sm">
+  {% for location in object.location_set.all %}
+  <tr>
+    <td style="width: 0">#{{location.id}}</td>
+    <th>
+      <a href="{% url "main:location" location.id %}">
+        {{location.name}}
+      </a>
+    </th>
+    <!-- TODO: Add number of volunteers and pending here. -->
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock content %}

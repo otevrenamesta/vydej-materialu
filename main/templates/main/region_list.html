@@ -1,0 +1,42 @@
+{% extends "main/base.html" %}
+
+{% block title %}Oblasti{% endblock title %}
+
+{% block content %}
+
+<h2 class="h3">Výdej materiálu</h2>
+
+<p>
+  Tato aplikace slouží pro zajištění výdeje materiálu v&nbsp;čase COVID-19
+  krize. Pokud nám chcete s&nbsp;výdejem pomoci, najděte si svou oblast
+  v&nbsp;seznamu níže a pokračujte vyhledáním vám blízké lokality, kde ještě
+  není dobrovolníků dostatek.
+</p>
+
+<h3 class="h4 mt-4">Oblasti</h3>
+<p>Výdej materiálu probíhá v&nbsp;níže uvedených oblastech:</p>
+
+<table class="table table-sm">
+  {% for region in object_list %}
+  <tr>
+    <th>
+      <a href="{% url "main:region" region.id %}">
+        {{region.name}}
+      </a>
+    </th>
+    <td>
+      {% with cnt=region.location_set.count %}
+      {% if cnt == 1 %}
+      {{cnt}} lokalita
+      {% elif cnt > 1 and cnt <= 4 %}
+      {{cnt}} lokality
+      {% else %}
+      {{cnt}} lokalit
+      {% endif %}
+      {% endwith %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock content %}

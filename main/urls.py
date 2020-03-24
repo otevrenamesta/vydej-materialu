@@ -1,20 +1,26 @@
 from django.urls import path
 
 from .views import (
+    AboutView,
     DispenseEditView,
     DispenseNewView,
     DispenseView,
-    HomeView,
+    LocationView,
     LoginView,
     LogoutView,
     PasswordResetView,
+    RegionListView,
+    RegionView,
     RegistrationView,
 )
 
 app_name = "main"
 
 urlpatterns = [
-    path("", HomeView.as_view(), name="home"),
+    path("", RegionListView.as_view(), name="region_list"),
+    path("oblast/<int:id>", RegionView.as_view(), name="region"),
+    path("lokalita/<int:id>", LocationView.as_view(), name="location"),
+    path("o-aplikaci", AboutView.as_view(), name="about"),
     path("registrace/", RegistrationView.as_view(), name="registration"),
     path("reset-hesla/", PasswordResetView.as_view(), name="password_reset"),
     path("prihlaseni/", LoginView.as_view(), name="login"),
