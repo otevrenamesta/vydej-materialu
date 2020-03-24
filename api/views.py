@@ -182,13 +182,14 @@ class DispenseView(ApiStaffRequiredMixin, ApiRequestValidationMixin, View):
                 }
                 return JsonResponse(response, status=400)
 
-            Dispensed.objects.create(
-                material=material,
-                user=request.user,
-                location=request.user.api_location,
-                quantity=item["quantity"],
-                id_card_no=id_card_no,
-            )
+            if item["quantity"] > 0:
+                Dispensed.objects.create(
+                    material=material,
+                    user=request.user,
+                    location=request.user.api_location,
+                    quantity=item["quantity"],
+                    id_card_no=id_card_no,
+                )
 
         response = {"result": "success"}
         return JsonResponse(response)
