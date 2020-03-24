@@ -6,7 +6,7 @@ from .models import Dispensed, Location, Material
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label="login", max_length=100)
+    email = forms.CharField(label="email", max_length=100)
     password = forms.CharField(
         label="heslo", widget=forms.PasswordInput(), max_length=100
     )

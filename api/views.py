@@ -86,7 +86,7 @@ class LoginView(ApiRequestValidationMixin, View):
     }
 
     def post(self, request, body, *args, **kwargs):
-        user = authenticate(username=body["login"], password=body["password"])
+        user = authenticate(email=body["login"], password=body["password"])
         if user is None:
             response = {
                 "result": "error",

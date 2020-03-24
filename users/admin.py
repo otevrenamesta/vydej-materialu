@@ -11,7 +11,6 @@ admin.site.unregister(Group)
 class UserAdmin(BaseUserAdmin):
     actions = None
     list_display = (
-        "username",
         "email",
         "first_name",
         "last_name",
@@ -25,15 +24,14 @@ class UserAdmin(BaseUserAdmin):
         "is_superuser",
     )
     radio_fields = {"status": admin.HORIZONTAL}
-    search_fields = ("username", "first_name", "last_name", "email")
+    search_fields = ("first_name", "last_name", "email")
     fieldsets = (
         (
             None,
             {
                 "fields": (
-                    "username",
-                    "password",
                     "email",
+                    "password",
                     "first_name",
                     "last_name",
                     "phone",
@@ -49,6 +47,10 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
+    add_fieldsets = (
+        (None, {"classes": ("wide",), "fields": ("email", "password1", "password2")}),
+    )
+    ordering = ("email",)
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:

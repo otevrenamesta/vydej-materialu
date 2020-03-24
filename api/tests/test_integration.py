@@ -97,7 +97,7 @@ def test_login__unknown_location(client, snapshot, user):
     user.set_password(password)
     user.save()
     payload = {
-        "login": user.username,
+        "login": user.email,
         "password": password,
         "location": str(fake.pyint()),
     }
@@ -113,7 +113,7 @@ def test_login__not_staff(client, snapshot, user, location):
     user.set_password(password)
     user.save()
     payload = {
-        "login": user.username,
+        "login": user.email,
         "password": password,
         "location": str(location.id),
     }
@@ -130,7 +130,7 @@ def test_login__staff_pending(client, snapshot, location_staff_factory):
     ls.user.set_password(password)
     ls.user.save()
     payload = {
-        "login": ls.user.username,
+        "login": ls.user.email,
         "password": password,
         "location": str(ls.location.id),
     }
@@ -147,7 +147,7 @@ def test_login__staff_admin(client, location_staff_factory):
     ls.user.set_password(password)
     ls.user.save()
     payload = {
-        "login": ls.user.username,
+        "login": ls.user.email,
         "password": password,
         "location": str(ls.location.id),
     }
@@ -167,7 +167,7 @@ def test_login__staff_volunteer(client, location_staff_factory):
     ls.user.set_password(password)
     ls.user.save()
     payload = {
-        "login": ls.user.username,
+        "login": ls.user.email,
         "password": password,
         "location": str(ls.location.id),
     }
