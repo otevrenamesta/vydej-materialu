@@ -149,8 +149,8 @@ class MaterialRecordAdmin(admin.ModelAdmin):
 
     def get_exclude(self, request, obj=None):
         if obj is None:
-            return ("dispensed", "region", "user")
-        return ("dispensed",)
+            return ("region", "user")
+        return []
 
     def get_readonly_fields(self, request, obj=None):
         if obj is not None:
@@ -169,15 +169,6 @@ class MaterialRecordAdmin(admin.ModelAdmin):
         obj.user = request.user
         super().save_model(request, obj, form, change)
 
-    def formfield_for_choice_field(self, db_field, request, **kwargs):
-        if db_field.name == "operation":
-            kwargs["choices"] = (
-                choice
-                for choice in MaterialRecord.OPERATION_CHOICES
-                if choice[0] != MaterialRecord.DISPENSED
-            )
-        return super().formfield_for_choice_field(db_field, request, **kwargs)
-
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "material":
             if not request.user.is_superuser:
@@ -191,13 +182,3 @@ class MaterialRecordAdmin(admin.ModelAdmin):
                     Q(region__admins=request.user) | Q(staff=request.user)
                 ).distinct()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-    def has_change_permission(self, request, obj=None):
-        if obj is not None:
-            return obj.operation != MaterialRecord.DISPENSED
-        return super().has_change_permission(request, obj)
-
-    def has_delete_permission(self, request, obj=None):
-        if obj is not None:
-            return obj.operation != MaterialRecord.DISPENSED
-        return super().has_delete_permission(request, obj)

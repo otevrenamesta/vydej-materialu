@@ -182,20 +182,6 @@ class Dispensed(models.Model):
         self.region = self.location.region
         super().save(*args, **kwargs)
 
-        if hasattr(self, "materialrecord"):
-            self.materialrecord.quantity = self.quantity
-            self.materialrecord.save()
-        else:
-            MaterialRecord.objects.create(
-                dispensed=self,
-                material=self.material,
-                location=self.location,
-                region=self.region,
-                user=self.user,
-                operation=MaterialRecord.DISPENSED,
-                quantity=self.quantity,
-            )
-
 
 class MaterialRecord(models.Model):
     RECEIVED = "received"
@@ -222,7 +208,6 @@ class MaterialRecord(models.Model):
     operation = models.CharField(
         "operace", max_length=10, choices=OPERATION_CHOICES, db_index=True
     )
-    dispensed = models.OneToOneField(Dispensed, on_delete=models.CASCADE, null=True)
 
     class Meta:
         ordering = ["-date"]
