@@ -63,6 +63,11 @@ class DispenseView(LoginRequiredMixin, TemplateView):
 
         return context
 
+    def get(self, request, *args, **kwargs):
+        if "location_id" not in self.request.session:
+            return redirect(reverse("main:logout"))
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         form = DispenseStartForm(request.POST)
         if form.is_valid():
