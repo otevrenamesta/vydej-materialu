@@ -242,3 +242,8 @@ class MaterialRecord(models.Model):
             self.quantity = -abs(self.quantity)
 
         super().save(*args, **kwargs)
+
+
+class Blacklist(models.Model):
+    id_card_no = models.IntegerField("číslo průkazu", db_index=True)
+    reason = models.TextField("zdůvodnění", null=True, blank=True)
