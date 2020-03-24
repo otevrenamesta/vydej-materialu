@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# exit on error
+set -e
+
 # migrate database
 python manage.py migrate
 
@@ -7,4 +10,4 @@ python manage.py migrate
 python manage.py load_groups
 
 # start webserver
-gunicorn -c gunicorn.conf.py config.wsgi
+exec gunicorn -c gunicorn.conf.py config.wsgi
