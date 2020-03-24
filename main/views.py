@@ -50,19 +50,16 @@ class LogoutView(View):
         return redirect(reverse("main:login"))
 
 
-class DispenseView(LoginRequiredMixin, TemplateView):
+class DispenseView(LoginRequiredMixin, FormView):
     template_name = "main/dispense_overview.html"
     history_limit = 10
+    form_class = DispenseStartForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         context["dispensed"] = Dispensed.objects.filter(
             location_id=self.request.session["location_id"]
         )[: self.history_limit]
-
-        context["form"] = DispenseStartForm()
-
         return context
 
     def get(self, request, *args, **kwargs):
@@ -70,14 +67,12 @@ class DispenseView(LoginRequiredMixin, TemplateView):
             return redirect(reverse("main:logout"))
         return super().get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        form = DispenseStartForm(request.POST)
-        if form.is_valid():
-            id_card_no = form.cleaned_data["id_card_no"]
-            return redirect(
-                reverse("main:dispense_new", kwargs={"id_card_no": id_card_no})
-            )
-        return redirect(reverse("main:dispense"))
+    def form_valid(self, form):
+        self.id_card_no = form.cleaned_data["id_card_no"]
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("main:dispense_new", kwargs={"id_card_no": self.id_card_no})
 
 
 class DispenseNewView(LoginRequiredMixin, TemplateView):
