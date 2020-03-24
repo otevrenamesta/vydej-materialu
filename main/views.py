@@ -2,7 +2,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import DetailView, ListView, TemplateView, UpdateView, View
+from django.views.generic import (
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+    View,
+)
 
 from .forms import DispensedForm, DispenseNewForm, DispenseStartForm, LoginForm
 from .models import Dispensed, Location, LocationStaff, Material, Region
@@ -20,26 +27,21 @@ class PasswordResetView(TemplateView):
     template_name = "main/under_construction.html"
 
 
-class LoginView(TemplateView):
+class LoginView(FormView):
     template_name = "main/login.html"
+    form_class = LoginForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = LoginForm()
-        return context
+    def form_valid(self, form):
+        user = authenticate(
+            email=form.cleaned_data["email"], password=form.cleaned_data["password"],
+        )
+        if user is not None:
+            login(self.request, user)
+            self.request.session["location_id"] = form.cleaned_data["location"].id
+        return super().form_valid(form)
 
-    def post(self, request, *args, **kwargs):
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = authenticate(
-                email=form.cleaned_data["email"],
-                password=form.cleaned_data["password"],
-            )
-            if user is not None:
-                login(request, user)
-                request.session["location_id"] = form.cleaned_data["location"].id
-                return redirect(reverse("main:dispense"))
-        return redirect(reverse("main:login"))
+    def get_success_url(self):
+        return reverse("main:dispense")
 
 
 class LogoutView(View):
