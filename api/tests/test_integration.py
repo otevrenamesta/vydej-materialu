@@ -1,4 +1,5 @@
 import json
+from random import randint
 from types import SimpleNamespace
 
 import pytest
@@ -209,7 +210,7 @@ def test_material(client, snapshot, material_record_factory, staff):
 def test_dispense__wrong_material(client, snapshot, staff, material_record_factory):
     material_record_factory(location=staff.location, material__id=1)
     material_record_factory(material__id=2)
-    payload = {"idcardno": "123456", "material": [{"id": 2, "quantity": 5}]}
+    payload = {"idcardno": 123456789, "material": [{"id": 2, "quantity": 5}]}
 
     response = client.post(
         reverse("api:dispense"),
@@ -239,7 +240,7 @@ def test_dispense__missing_id_card_no(client, snapshot, staff, material_record_f
 
 def test_dispense__zero_quantity(client, snapshot, staff, material_record_factory):
     material_record_factory(location=staff.location, material__id=1)
-    payload = {"idcardno": "123456", "material": [{"id": 1, "quantity": 0}]}
+    payload = {"idcardno": 123456789, "material": [{"id": 1, "quantity": 0}]}
 
     response = client.post(
         reverse("api:dispense"),
@@ -259,7 +260,7 @@ def test_dispense(client, snapshot, staff, material_record_factory):
     m2 = material_record_factory(
         location=staff.location, material__region=staff.location.region
     )
-    id_card_no = fake.ssn()
+    id_card_no = randint(0, 10 ** 11)
     payload = {
         "idcardno": id_card_no,
         "material": [
@@ -304,7 +305,7 @@ def test_validate__full_limit(client, snapshot, material_record_factory, staff):
         location=staff.location, material__id=2, material__limit=2, material__period=7,
     )
     material_record_factory(material__id=3)
-    payload = {"id_card_no": fake.ssn()}
+    payload = {"id_card_no": randint(0, 10 ** 11)}
 
     response = client.post(
         reverse("api:validate"),

@@ -101,11 +101,11 @@ class DispenseView(ApiStaffRequiredMixin, View):
             return invalid_body_response()
 
         id_card_no = body.get("idcardno")
-        if not id_card_no:
+        if not isinstance(id_card_no, int):
             response = {
                 "result": "error",
                 "code": "invalid-request",
-                "message": "Chybí číslo průkazu.",
+                "message": "Číslo dokladu chybí nebo není platné.",
             }
             return JsonResponse(response, status=400)
 

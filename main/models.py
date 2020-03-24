@@ -167,7 +167,7 @@ class Dispensed(models.Model):
     quantity = models.PositiveIntegerField("množství")
     created = models.DateTimeField("vytvořeno", auto_now_add=True)
     changed = models.DateTimeField("upraveno", auto_now=True)
-    id_card_no = models.CharField("číslo průkazu", max_length=100, db_index=True)
+    id_card_no = models.BigIntegerField("číslo průkazu", db_index=True)
 
     class Meta:
         ordering = ["-created"]
@@ -245,5 +245,5 @@ class MaterialRecord(models.Model):
 
 
 class Blacklist(models.Model):
-    id_card_no = models.IntegerField("číslo průkazu", db_index=True)
+    id_card_no = models.BigIntegerField("číslo průkazu", db_index=True)
     reason = models.TextField("zdůvodnění", null=True, blank=True)

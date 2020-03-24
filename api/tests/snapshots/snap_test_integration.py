@@ -71,7 +71,7 @@ snapshots['test_dispense__wrong_material 1'] = {
 
 snapshots['test_dispense__missing_id_card_no 1'] = {
     'code': 'invalid-request',
-    'message': 'Chybí číslo průkazu.',
+    'message': 'Číslo dokladu chybí nebo není platné.',
     'result': 'error'
 }
 
