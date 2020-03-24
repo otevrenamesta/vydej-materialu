@@ -299,10 +299,18 @@ def test_dispense(client, snapshot, staff, material_record_factory):
 
 def test_validate__full_limit(client, snapshot, material_record_factory, staff):
     material_record_factory(
-        location=staff.location, material__id=1, material__limit=10, material__period=5,
+        location=staff.location,
+        material__id=1,
+        material__limit=10,
+        material__period=5,
+        material__name="Respirátor",
     )
     material_record_factory(
-        location=staff.location, material__id=2, material__limit=2, material__period=7,
+        location=staff.location,
+        material__id=2,
+        material__limit=2,
+        material__period=7,
+        material__name="Rouška",
     )
     material_record_factory(material__id=3)
     payload = {"id_card_no": randint(0, 10 ** 11)}
