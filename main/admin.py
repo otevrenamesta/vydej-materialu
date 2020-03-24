@@ -60,8 +60,10 @@ class LocationStaffInline(admin.TabularInline):
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     actions = None
-    list_display = ("name", "region", "status")
+    list_display = ("id", "name", "region", "status")
+    list_display_links = ("id", "name")
     list_filter = ("status", "region")
+    fields = ("id", "name", "region", "status", "about", "address", "phone")
     radio_fields = {"status": admin.HORIZONTAL}
     search_fields = ("name", "region__name")
     inlines = (LocationStaffInline,)
@@ -83,8 +85,8 @@ class LocationAdmin(admin.ModelAdmin):
         if obj is not None and not (
             request.user.is_superuser or request.user.is_region_admin
         ):
-            return ("region",)
-        return []
+            return ("id", "region")
+        return ("id",)
 
 
 @admin.register(Dispensed)

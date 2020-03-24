@@ -103,12 +103,12 @@ class Location(models.Model):
     )
 
     class Meta:
-        ordering = ["region", "name"]
+        ordering = ["id"]
         verbose_name = "Lokalita"
         verbose_name_plural = "Lokality"
 
     def __str__(self):
-        return f"{self.name} ({self.region})"
+        return f"{self.id} - {self.name} ({self.region})"
 
 
 class LocationStaff(models.Model):
