@@ -67,7 +67,7 @@ class DispensedFactory(DjangoModelFactory):
     region = SubFactory(RegionFactory)
     user = SubFactory(UserFactory)
     quantity = Faker("random_digit")
-    id_card_no = Faker("ssn")
+    id_card_no = Faker("random_int")
 
     class Meta:
         model = Dispensed
