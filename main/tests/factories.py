@@ -2,7 +2,14 @@ from factory import DjangoModelFactory, Faker, SubFactory
 
 from users.tests.factories import UserFactory
 
-from ..models import Location, LocationStaff, Material, MaterialRecord, Region
+from ..models import (
+    Dispensed,
+    Location,
+    LocationStaff,
+    Material,
+    MaterialRecord,
+    Region,
+)
 
 
 class RegionFactory(DjangoModelFactory):
@@ -52,3 +59,15 @@ class MaterialRecordFactory(DjangoModelFactory):
 
     class Meta:
         model = MaterialRecord
+
+
+class DispensedFactory(DjangoModelFactory):
+    material = SubFactory(MaterialFactory)
+    location = SubFactory(LocationFactory)
+    region = SubFactory(RegionFactory)
+    user = SubFactory(UserFactory)
+    quantity = Faker("random_digit")
+    id_card_no = Faker("ssn")
+
+    class Meta:
+        model = Dispensed

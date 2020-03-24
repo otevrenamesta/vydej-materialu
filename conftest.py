@@ -4,6 +4,7 @@ from pytest_factoryboy import register
 
 from api.tests.factories import ApiTokenFactory
 from main.tests.factories import (
+    DispensedFactory,
     LocationFactory,
     LocationStaffFactory,
     MaterialFactory,
@@ -13,6 +14,7 @@ from main.tests.factories import (
 from users.tests.factories import UserFactory
 
 register(ApiTokenFactory)
+register(DispensedFactory)
 register(LocationFactory)
 register(LocationStaffFactory)
 register(MaterialFactory)
