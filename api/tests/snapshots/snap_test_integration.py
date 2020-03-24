@@ -49,12 +49,6 @@ snapshots['test_material__nothing_available 1'] = {
     'result': 'success'
 }
 
-snapshots['test_material__no_token 1'] = {
-    'code': 'invalid-token',
-    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
-    'result': 'error'
-}
-
 snapshots['test_material 1'] = {
     'material': [
         {
@@ -67,30 +61,6 @@ snapshots['test_material 1'] = {
         }
     ],
     'result': 'success'
-}
-
-snapshots['test_material__not_staff 1'] = {
-    'code': 'invalid-token',
-    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
-    'result': 'error'
-}
-
-snapshots['test_dispense__no_token 1'] = {
-    'code': 'invalid-token',
-    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
-    'result': 'error'
-}
-
-snapshots['test_dispense__not_staff 1'] = {
-    'code': 'invalid-token',
-    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
-    'result': 'error'
-}
-
-snapshots['test_dispense__wrong_payload 1'] = {
-    'code': 'invalid-request',
-    'message': 'Nelze přečíst payload requestu.',
-    'result': 'error'
 }
 
 snapshots['test_dispense__wrong_material 1'] = {
@@ -113,4 +83,34 @@ snapshots['test_dispense__zero_quantity 1'] = {
 
 snapshots['test_dispense 1'] = {
     'result': 'success'
+}
+
+snapshots['test_post__no_token[api:dispense] 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_post__not_staff[api:dispense] 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_post__wrong_payload[api:dispense] 1'] = {
+    'code': 'invalid-request',
+    'message': 'Nelze přečíst payload requestu.',
+    'result': 'error'
+}
+
+snapshots['test_get__no_token[api:material] 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
+}
+
+snapshots['test_get__not_staff[api:material] 1'] = {
+    'code': 'invalid-token',
+    'message': 'Problém s ověřením identity. Kontaktujte koordinátora.',
+    'result': 'error'
 }

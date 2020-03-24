@@ -22,6 +22,48 @@ def staff(location_staff_factory, api_token):
     )
 
 
+@pytest.mark.parametrize("url", ["api:material"])
+def test_get__no_token(client, snapshot, url):
+    response = client.get(reverse(url))
+
+    assert response.status_code == 401
+    snapshot.assert_match(json.loads(response.content))
+
+
+@pytest.mark.parametrize("url", ["api:material"])
+def test_get__not_staff(client, snapshot, api_token, url):
+    response = client.get(reverse(url), HTTP_AUTHORIZATION=api_token.header)
+
+    assert response.status_code == 401
+    snapshot.assert_match(json.loads(response.content))
+
+
+@pytest.mark.parametrize("url", ["api:dispense"])
+def test_post__no_token(client, snapshot, url):
+    response = client.post(reverse(url))
+
+    assert response.status_code == 401
+    snapshot.assert_match(json.loads(response.content))
+
+
+@pytest.mark.parametrize("url", ["api:dispense"])
+def test_post__not_staff(client, snapshot, api_token, url):
+    response = client.post(reverse(url), HTTP_AUTHORIZATION=api_token.header)
+
+    assert response.status_code == 401
+    snapshot.assert_match(json.loads(response.content))
+
+
+@pytest.mark.parametrize("url", ["api:dispense"])
+def test_post__wrong_payload(client, snapshot, staff, url):
+    response = client.post(
+        reverse(url), "abc", "text/plain", HTTP_AUTHORIZATION=staff.api_token.header,
+    )
+
+    assert response.status_code == 400
+    snapshot.assert_match(json.loads(response.content))
+
+
 def test_login__missing_payload(client, snapshot):
     response = client.post(reverse("api:login"))
 
@@ -138,20 +180,6 @@ def test_login__staff_volunteer(client, location_staff_factory):
     assert len(content["token"]) > 50
 
 
-def test_material__no_token(client, snapshot):
-    response = client.get(reverse("api:material"))
-
-    assert response.status_code == 401
-    snapshot.assert_match(json.loads(response.content))
-
-
-def test_material__not_staff(client, snapshot, api_token):
-    response = client.get(reverse("api:material"), HTTP_AUTHORIZATION=api_token.header)
-
-    assert response.status_code == 401
-    snapshot.assert_match(json.loads(response.content))
-
-
 def test_material__nothing_available(client, snapshot, staff):
     response = client.get(
         reverse("api:material"), HTTP_AUTHORIZATION=staff.api_token.header
@@ -175,32 +203,6 @@ def test_material(client, snapshot, material_record_factory, staff):
     )
 
     assert response.status_code == 200
-    snapshot.assert_match(json.loads(response.content))
-
-
-def test_dispense__no_token(client, snapshot):
-    response = client.post(reverse("api:dispense"))
-
-    assert response.status_code == 401
-    snapshot.assert_match(json.loads(response.content))
-
-
-def test_dispense__not_staff(client, snapshot, api_token):
-    response = client.post(reverse("api:dispense"), HTTP_AUTHORIZATION=api_token.header)
-
-    assert response.status_code == 401
-    snapshot.assert_match(json.loads(response.content))
-
-
-def test_dispense__wrong_payload(client, snapshot, staff):
-    response = client.post(
-        reverse("api:dispense"),
-        "abc",
-        "text/plain",
-        HTTP_AUTHORIZATION=staff.api_token.header,
-    )
-
-    assert response.status_code == 400
     snapshot.assert_match(json.loads(response.content))
 
 
