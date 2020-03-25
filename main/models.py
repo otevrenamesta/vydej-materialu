@@ -167,7 +167,7 @@ class Dispensed(models.Model):
     quantity = models.PositiveIntegerField("množství")
     created = models.DateTimeField("vytvořeno", auto_now_add=True)
     changed = models.DateTimeField("upraveno", auto_now=True)
-    id_card_no = models.BigIntegerField("číslo průkazu", db_index=True)
+    id_card_no = models.BigIntegerField("číslo dokladu", db_index=True)
 
     class Meta:
         ordering = ["-created"]

@@ -33,18 +33,16 @@ class DispenseStartForm(forms.Form):
 
 
 class DispenseItemForm(forms.Form):
-    quantity = forms.IntegerField(label="množství")
+    quantity = forms.IntegerField(label="množství", initial=0)
+
+    def __init__(self, material, *args, **kwargs):
+        super(DispenseItemForm, self).__init__(
+            prefix=f"m{material.id}", *args, **kwargs
+        )
+        self.material = material
 
 
 class DispensedForm(forms.ModelForm):
     class Meta:
         model = Dispensed
         fields = ["material", "id_card_no", "quantity"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = "form-horizontal"
-        self.helper.label_class = "col-lg-2"
-        self.helper.field_class = "col-lg-7"
-        self.helper.add_input(Submit("submit", "uložit"))

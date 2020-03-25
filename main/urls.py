@@ -29,5 +29,5 @@ urlpatterns = [
     path(
         "vydej/novy/<int:id_card_no>/", DispenseNewView.as_view(), name="dispense_new"
     ),
-    path("vydej/editace/<int:pk>/", DispenseEditView.as_view(), name="dispense_edit"),
+    path("vydej/editace/<int:pk>/", DispenseEditView.as_view(), name="dispense_edit",),
 ]

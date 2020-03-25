@@ -2,7 +2,7 @@
 {% block title %}Výdej{% endblock title %}
 {% block content %}
 
-<h2 class="h5 my-4">Číslo průkazu: {{ id_card_no }}</h2>
+<h2 class="h5 my-4">Číslo dokladu: {{ id_card_no }}</h2>
 
 <h2 class="h5 my-2">Záznam o výdeji</h2>
 
@@ -13,37 +13,16 @@
 
     <table class="table table-sm">
       {% for form in forms %}
-        <tr>
-          <td class="align-middle">{{ form.material.name }}</td>
-          <td style="width: 0">
-            <button class="btn btn-danger"
-                    tabindex="-1"
-                    data-decrement="#{{ form.quantity.id_for_label }}">
-              <i class="fa fa-minus"></i>
-            </button>
-          </td>
-          <td style="width: 40px">
-            <input class="form-control"
-                   type="number" min="0" step="1" value="0"
-                   style="width: 5em"
-                   id="{{ form.quantity.id_for_label }}" name="{{ form.quantity.html_name }}"
-                   data-limit="3"
-                   tabindex="1">
-          </td>
-          <td style="width: 0">
-            <button class="btn btn-success"
-                    tabindex="-1"
-                    data-increment="#{{ form.quantity.id_for_label }}">
-              <i class="fa fa-plus"></i>
-            </button>
-          </td>
-        </tr>
+        {% include 'main/dispense_form_snippet.html' with material=form.material quantity_field=form.quantity %}
       {% endfor %}
 
       <tr>
         <td colspan="2"></td>
         <td>
-          <button type="submit" class="btn btn-primary mt-2" style="width: 100%" tabindex="2">Uložit</button>
+          <button type="submit"
+                  class="btn btn-primary mt-2"
+                  style="width: 100%"
+                  tabindex="2">Uložit</button>
         </td>
         <td></td>
       </tr>

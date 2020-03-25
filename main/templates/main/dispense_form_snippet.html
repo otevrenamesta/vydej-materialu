@@ -1,0 +1,25 @@
+<tr>
+  <td class="align-middle">{{ material.name }}</td>
+  <td style="width: 0">
+    <button class="btn btn-danger"
+            tabindex="-1"
+            data-decrement="#{{ quantity_field.id_for_label }}">
+      <i class="fa fa-minus"></i>
+    </button>
+  </td>
+  <td style="width: 40px">
+    <input class="form-control"
+           type="number" min="0" step="1" value="{{ quantity_field.value }}"
+           style="width: 5em"
+           id="{{ quantity_field.id_for_label }}" name="{{ quantity_field.html_name }}"
+           data-limit="3"
+           tabindex="1">
+  </td>
+  <td style="width: 0">
+    <button class="btn btn-success"
+            tabindex="-1"
+            data-increment="#{{ quantity_field.id_for_label }}">
+      <i class="fa fa-plus"></i>
+    </button>
+  </td>
+</tr>

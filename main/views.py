@@ -84,16 +84,12 @@ class DispenseNewView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, id_card_no, **kwargs):
         context = super().get_context_data(**kwargs)
         context["id_card_no"] = id_card_no
-        context["forms"] = []
-        for material in self.get_materials():
-            form = DispenseItemForm(prefix=f"m{material.id}")
-            form.material = material
-            context["forms"].append(form)
+        context["forms"] = [DispenseItemForm(mat) for mat in self.get_materials()]
         return context
 
     def post(self, request, id_card_no, *args, **kwargs):
         for material in self.get_materials():
-            form = DispenseItemForm(request.POST, prefix=f"m{material.id}")
+            form = DispenseItemForm(material, request.POST)
             if form.is_valid() and form.cleaned_data["quantity"] > 0:
                 Dispensed.objects.create(
                     material=material,
@@ -106,9 +102,12 @@ class DispenseNewView(LoginRequiredMixin, TemplateView):
 
 
 class DispenseEditView(LoginRequiredMixin, UpdateView):
-    model = Dispensed
-    form_class = DispensedForm
     template_name = "main/dispense_edit.html"
+    model = Dispensed
+    fields = ["id_card_no", "quantity"]
+
+    def get_success_url(self):
+        return reverse("main:dispense")
 
 
 class RegionListView(ListView):
