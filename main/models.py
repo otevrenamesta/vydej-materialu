@@ -79,7 +79,7 @@ class Material(models.Model):
         return cls.objects.filter(
             materialrecord__location__id=location_id,
             materialrecord__operation=MaterialRecord.RECEIVED,
-        )
+        ).distinct()
 
 
 class Location(models.Model):
