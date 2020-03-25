@@ -70,6 +70,8 @@ class User(AbstractUser):
             self.is_active = True
         elif self.status == self.DISABLED:
             self.is_active = False
+        if self.is_superuser:
+            self.is_staff = True
         super().save(*args, **kwargs)
 
     @property
