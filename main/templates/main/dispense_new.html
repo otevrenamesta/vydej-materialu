@@ -1,12 +1,81 @@
 {% extends "main/base.html" %}
-{% load crispy_forms_tags %}
 {% block title %}Výdej{% endblock title %}
 {% block content %}
 
-<h2 class="h5 mt-4">OP {{ id_card_no }}</h2>
+<h2 class="h5 my-4">Číslo průkazu: {{ id_card_no }}</h2>
 
 <h2 class="h5 my-2">Záznam o výdeji</h2>
 
-{% crispy form %}
+
+<form method="post" action="{% url 'main:dispense_new' id_card_no=id_card_no %}" autocomplete="off">
+  {% csrf_token %}
+  <table class="table table-sm">
+    {% for form in forms %}
+      <tr>
+        <td class="align-middle">{{ form.material.name }}</td>
+        <td style="width: 0">
+          <button class="btn btn-danger"
+                  tabindex="-1"
+                  data-decrement="#{{ form.quantity.id_for_label }}">
+            <i class="fa fa-minus"></i>
+          </button>
+        </td>
+        <td style="width: 40px">
+          <input class="form-control"
+                 type="number" min="0" step="1" value="0"
+                 style="width: 5em"
+                 id="{{ form.quantity.id_for_label }}" name="{{ form.quantity.html_name }}"
+                 data-limit="3"
+                 tabindex="1">
+        </td>
+        <td style="width: 0">
+          <button class="btn btn-success"
+                  tabindex="-1"
+                  data-increment="#{{ form.quantity.id_for_label }}">
+            <i class="fa fa-plus"></i>
+          </button>
+        </td>
+      </tr>
+    {% endfor %}
+
+    <tr>
+      <td colspan="2"></td>
+      <td>
+        <button type="submit" class="btn btn-primary mt-2" style="width: 100%" tabindex="2">Uložit</button>
+      </td>
+      <td></td>
+    </tr>
+  </table>
+</form>
 
 {% endblock content %}
+
+{% block javascript %}
+<script type="text/javascript">
+  $('*[data-increment]').click(function() {
+    var target = $(this.dataset.increment);
+    target.val(function(i, orig) {
+      return parseInt(orig) + 1;
+    });
+    target.trigger('change');
+    return false;
+  });
+
+  $('*[data-decrement]').click(function() {
+    var target = $(this.dataset.decrement);
+    target.val(function(i, orig) {
+      return Math.max(0, parseInt(orig) - 1);
+    });
+    target.trigger('change');
+    return false;
+  });
+
+  $('*[data-limit]').change(function() {
+    if (parseInt(this.dataset.limit) >= parseInt(this.value)) {
+      $(this).removeClass('bg-warning');
+    } else {
+      $(this).addClass('bg-warning');
+    }
+  }).trigger('change');
+</script>
+{% endblock javascript %}

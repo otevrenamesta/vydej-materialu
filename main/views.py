@@ -11,7 +11,7 @@ from django.views.generic import (
     View,
 )
 
-from .forms import DispensedForm, DispenseNewForm, DispenseStartForm, LoginForm
+from .forms import DispensedForm, DispenseItemForm, DispenseStartForm, LoginForm
 from .models import Dispensed, Location, LocationStaff, Material, Region
 
 
@@ -78,30 +78,33 @@ class DispenseView(LoginRequiredMixin, FormView):
 class DispenseNewView(LoginRequiredMixin, TemplateView):
     template_name = "main/dispense_new.html"
 
-    def get_context_data(self, id_card_no, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["id_card_no"] = id_card_no
-
-        context["form"] = DispenseNewForm()
-        context["form"].fields["material"].queryset = Material.objects.filter(
+    def get_materials(self):
+        return Material.objects.filter(
             region__location__id=self.request.session["location_id"]
         )
 
+    def get_context_data(self, id_card_no, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["id_card_no"] = id_card_no
+        context["forms"] = []
+        for material in self.get_materials():
+            form = DispenseItemForm(prefix=f"m{material.id}")
+            form.material = material
+            context["forms"].append(form)
         return context
 
     def post(self, request, id_card_no, *args, **kwargs):
-        form = DispenseNewForm(request.POST)
-        if form.is_valid():
-            Dispensed.objects.create(
-                material=form.cleaned_data["material"],
-                user=request.user,
-                location_id=request.session["location_id"],
-                quantity=form.cleaned_data["quantity"],
-                id_card_no=id_card_no,
-            )
-            return redirect(reverse("main:dispense"))
-        return redirect(reverse("main:dispense_new", kwargs={"id_card_no": id_card_no}))
+        for material in self.get_materials():
+            form = DispenseItemForm(request.POST, prefix=f"m{material.id}")
+            if form.is_valid() and form.cleaned_data["quantity"] > 0:
+                Dispensed.objects.create(
+                    material=material,
+                    user=request.user,
+                    location_id=request.session["location_id"],
+                    quantity=form.cleaned_data["quantity"],
+                    id_card_no=id_card_no,
+                )
+        return redirect(reverse("main:dispense"))
 
 
 class DispenseEditView(LoginRequiredMixin, UpdateView):
