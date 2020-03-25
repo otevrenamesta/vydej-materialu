@@ -79,9 +79,7 @@ class DispenseNewView(LoginRequiredMixin, TemplateView):
     template_name = "main/dispense_new.html"
 
     def get_materials(self):
-        return Material.objects.filter(
-            region__location__id=self.request.session["location_id"]
-        )
+        return Material.get_available(self.request.session["location_id"])
 
     def get_context_data(self, id_card_no, **kwargs):
         context = super().get_context_data(**kwargs)

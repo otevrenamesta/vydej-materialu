@@ -6,47 +6,55 @@
 
 <h2 class="h5 my-2">Záznam o výdeji</h2>
 
+{% if forms %}
 
-<form method="post" action="{% url 'main:dispense_new' id_card_no=id_card_no %}" autocomplete="off">
-  {% csrf_token %}
-  <table class="table table-sm">
-    {% for form in forms %}
+  <form method="post" action="{% url 'main:dispense_new' id_card_no=id_card_no %}" autocomplete="off">
+    {% csrf_token %}
+
+    <table class="table table-sm">
+      {% for form in forms %}
+        <tr>
+          <td class="align-middle">{{ form.material.name }}</td>
+          <td style="width: 0">
+            <button class="btn btn-danger"
+                    tabindex="-1"
+                    data-decrement="#{{ form.quantity.id_for_label }}">
+              <i class="fa fa-minus"></i>
+            </button>
+          </td>
+          <td style="width: 40px">
+            <input class="form-control"
+                   type="number" min="0" step="1" value="0"
+                   style="width: 5em"
+                   id="{{ form.quantity.id_for_label }}" name="{{ form.quantity.html_name }}"
+                   data-limit="3"
+                   tabindex="1">
+          </td>
+          <td style="width: 0">
+            <button class="btn btn-success"
+                    tabindex="-1"
+                    data-increment="#{{ form.quantity.id_for_label }}">
+              <i class="fa fa-plus"></i>
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+
       <tr>
-        <td class="align-middle">{{ form.material.name }}</td>
-        <td style="width: 0">
-          <button class="btn btn-danger"
-                  tabindex="-1"
-                  data-decrement="#{{ form.quantity.id_for_label }}">
-            <i class="fa fa-minus"></i>
-          </button>
+        <td colspan="2"></td>
+        <td>
+          <button type="submit" class="btn btn-primary mt-2" style="width: 100%" tabindex="2">Uložit</button>
         </td>
-        <td style="width: 40px">
-          <input class="form-control"
-                 type="number" min="0" step="1" value="0"
-                 style="width: 5em"
-                 id="{{ form.quantity.id_for_label }}" name="{{ form.quantity.html_name }}"
-                 data-limit="3"
-                 tabindex="1">
-        </td>
-        <td style="width: 0">
-          <button class="btn btn-success"
-                  tabindex="-1"
-                  data-increment="#{{ form.quantity.id_for_label }}">
-            <i class="fa fa-plus"></i>
-          </button>
-        </td>
+        <td></td>
       </tr>
-    {% endfor %}
+    </table>
+  </form>
 
-    <tr>
-      <td colspan="2"></td>
-      <td>
-        <button type="submit" class="btn btn-primary mt-2" style="width: 100%" tabindex="2">Uložit</button>
-      </td>
-      <td></td>
-    </tr>
-  </table>
-</form>
+{% else %}
+
+  <div class="alert alert-danger" role="alert">V této lokalitě nebyl naskladněn žádný materiál k výdeji. Kontaktujte prosím koordinátora.</div>
+
+{% endif %}
 
 {% endblock content %}
 

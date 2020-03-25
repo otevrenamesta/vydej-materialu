@@ -75,9 +75,9 @@ class Material(models.Model):
         return f"{self.name} ({self.region})"
 
     @classmethod
-    def get_available(cls, location):
+    def get_available(cls, location_id):
         return cls.objects.filter(
-            materialrecord__location=location,
+            materialrecord__location__id=location_id,
             materialrecord__operation=MaterialRecord.RECEIVED,
         )
 
