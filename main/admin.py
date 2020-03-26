@@ -61,6 +61,7 @@ class MaterialAdmin(admin.ModelAdmin):
 class LocationStaffInline(admin.TabularInline):
     model = LocationStaff
     extra = 1
+    radio_fields = {"status": admin.HORIZONTAL}
 
 
 @admin.register(Location)

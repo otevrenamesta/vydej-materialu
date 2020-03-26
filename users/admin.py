@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 
+from main.admin import LocationStaffInline, RegionAdminInline
+
 from .models import User
 
 admin.site.unregister(Group)
@@ -51,6 +53,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {"classes": ("wide",), "fields": ("email", "password1", "password2")}),
     )
     ordering = ("email",)
+    inlines = (RegionAdminInline, LocationStaffInline)
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
