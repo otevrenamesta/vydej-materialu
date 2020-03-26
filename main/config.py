@@ -44,7 +44,12 @@ LOCATION_ADMIN = {
 
 LOCATION_VOLUNTEER = {
     "group_name": "Dobrovolník",
-    "permissions": ["add_dispensed", "change_dispensed", "view_dispensed",],
+    "permissions": [
+        "add_dispensed",
+        "change_dispensed",
+        "view_dispensed",
+        "view_materialrecord",
+    ],
 }
 
 GROUPS = [REGION_ADMIN, LOCATION_ADMIN, LOCATION_VOLUNTEER]
