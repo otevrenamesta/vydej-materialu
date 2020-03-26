@@ -32,6 +32,11 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.location_set.all().update(region_name=self.name)
+        self.material_set.all().update(region_name=self.name)
+
 
 class RegionAdmin(models.Model):
     user = models.ForeignKey(
@@ -67,14 +72,20 @@ class Material(models.Model):
     )
     limit = models.FloatField("limit výdeje", null=True, blank=True)
     period = models.PositiveIntegerField("perioda výdeje", null=True, blank=True)
+    # denormalized for fast __str__() without related queries
+    region_name = models.CharField("název regionu", max_length=1000)
 
     class Meta:
-        ordering = ["name", "region"]
+        ordering = ["region_name", "name"]
         verbose_name = "Materiál"
         verbose_name_plural = "Materiály"
 
     def __str__(self):
-        return f"{self.name} ({self.region})"
+        return f"{self.region_name} / {self.name}"
+
+    def save(self, *args, **kwargs):
+        self.region_name = self.region.name
+        super().save(*args, **kwargs)
 
     @classmethod
     def get_available(cls, location_id):
@@ -103,6 +114,8 @@ class Location(models.Model):
     staff = models.ManyToManyField(
         settings.AUTH_USER_MODEL, verbose_name="personál", through="LocationStaff",
     )
+    # denormalized for fast __str__() without related queries
+    region_name = models.CharField("název regionu", max_length=1000)
 
     class Meta:
         ordering = ["id"]
@@ -110,7 +123,11 @@ class Location(models.Model):
         verbose_name_plural = "Lokality"
 
     def __str__(self):
-        return f"{self.id} - {self.name} ({self.region})"
+        return f"#{self.id} - {self.region_name} / {self.name}"
+
+    def save(self, *args, **kwargs):
+        self.region_name = self.region.name
+        super().save(*args, **kwargs)
 
 
 class LocationStaff(models.Model):
