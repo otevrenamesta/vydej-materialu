@@ -4,6 +4,8 @@ from django.db import models
 
 from .utils import setup_user_permissons
 
+help_markdown = "Markdown syntaxe. Nadpisy nejsou povolené a nezobrazí se na webu!"
+
 
 class Region(models.Model):
     ACTIVE = "active"
@@ -14,7 +16,7 @@ class Region(models.Model):
     ]
 
     name = models.CharField("název", max_length=1000, unique=True)
-    about = models.TextField("popis", null=True, blank=True)
+    about = models.TextField("popis", null=True, blank=True, help_text=help_markdown)
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=ACTIVE, db_index=True
     )
@@ -95,7 +97,7 @@ class Location(models.Model):
     status = models.CharField(
         "status", max_length=10, choices=STATUS_CHOICES, default=ACTIVE, db_index=True
     )
-    about = models.TextField("popis", null=True, blank=True)
+    about = models.TextField("popis", null=True, blank=True, help_text=help_markdown)
     address = models.TextField("adresa", null=True, blank=True)
     phone = models.CharField("telefon", max_length=20, null=True, blank=True)
     staff = models.ManyToManyField(

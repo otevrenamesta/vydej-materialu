@@ -1,6 +1,9 @@
 from django.contrib import admin
+from django.db import models
 from django.db.models import Q
+from pagedown.widgets import AdminPagedownWidget
 
+from .forms import LocationAdminForm
 from .models import Dispensed, Location, LocationStaff, Material, MaterialRecord, Region
 from .models import RegionAdmin as RegionAdminModel
 
@@ -22,6 +25,9 @@ class RegionAdmin(admin.ModelAdmin):
     radio_fields = {"status": admin.HORIZONTAL}
     search_fields = ("name",)
     inlines = (RegionAdminInline,)
+    formfield_overrides = {
+        models.TextField: {"widget": AdminPagedownWidget},
+    }
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -59,6 +65,7 @@ class LocationStaffInline(admin.TabularInline):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
+    form = LocationAdminForm
     actions = None
     list_display = ("id", "name", "region", "status")
     list_display_links = ("id", "name")

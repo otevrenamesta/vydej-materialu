@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django.contrib.admin",
     "crispy_forms",
+    "markdownify",
+    "pagedown.apps.PagedownConfig",
     "users.apps.UsersConfig",
     "main.apps.MainConfig",
     "api.apps.ApiConfig",
@@ -95,6 +97,22 @@ TEMPLATES = [
     }
 ]
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+MARKDOWNIFY_WHITELIST_TAGS = [
+    "a",
+    "abbr",
+    "acronym",
+    "b",
+    "blockquote",
+    "code",
+    "em",
+    "i",
+    "li",
+    "ol",
+    "p",
+    "strong",
+    "ul",
+]
 
 # SECURITY
 # ------------------------------------------------------------------------------

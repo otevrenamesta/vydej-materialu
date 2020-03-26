@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load markdownify %}
 
 {% block title %}{{object.name}}{% endblock title %}
 
@@ -36,8 +37,8 @@
 
   <tr>
     <th>Adresa</th>
-    {% if object.addres %}
-    <td>{{object.address|linebreaksbr}}</td>
+    {% if object.address %}
+    <td>{{ object.address|linebreaksbr }}</td>
     {% else %}
     <td><i>není uvedena</i></td>
     {% endif %}
@@ -87,8 +88,8 @@
 
 <h5>Popis</h5>
 <div class="description">
-  {% if object.description %}
-  {{object.description|linebreaks}}
+  {% if object.about %}
+  {{ object.about|markdownify }}
   {% else %}
   <i>není uveden</i>
   {% endif %}

@@ -1,4 +1,5 @@
 {% extends "main/base.html" %}
+{% load markdownify %}
 
 {% block title %}{{object.name}}{% endblock title %}
 
@@ -15,10 +16,13 @@
   </ol>
 </nav>
 
+<h4>{{ object.name }}</h4>
+
+{{ object.about|markdownify }}
+
 <h5 class="mt-4">Lokality</h5>
 <p>
-  Výdej materiálu pro&nbsp;oblast <strong>{{object.name}}</strong> probíhá
-  v&nbsp;níže uvedených lokalitách:
+  Výdej materiálu probíhá v&nbsp;níže uvedených lokalitách:
 </p>
 
 <table class="table table-sm">

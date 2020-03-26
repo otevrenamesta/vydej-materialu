@@ -1,6 +1,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
+from pagedown.widgets import AdminPagedownWidget
 
 from .models import Dispensed, Location, Material
 
@@ -46,3 +47,10 @@ class DispensedForm(forms.ModelForm):
     class Meta:
         model = Dispensed
         fields = ["material", "id_card_no", "quantity"]
+
+
+class LocationAdminForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = "__all__"
+        widgets = {"about": AdminPagedownWidget()}
