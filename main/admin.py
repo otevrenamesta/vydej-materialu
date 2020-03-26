@@ -43,6 +43,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_filter = ("status", "region")
     radio_fields = {"status": admin.HORIZONTAL}
     search_fields = ("name", "region__name")
+    exclude = ("region_name",)
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -71,7 +72,6 @@ class LocationAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "region", "status")
     list_display_links = ("id", "name")
     list_filter = ("status", "region")
-    fields = ("id", "name", "region", "status", "about", "address", "phone")
     radio_fields = {"status": admin.HORIZONTAL}
     search_fields = ("name", "region__name")
     inlines = (LocationStaffInline,)
@@ -95,6 +95,11 @@ class LocationAdmin(admin.ModelAdmin):
         ):
             return ("id", "region")
         return ("id",)
+
+    def get_fields(self, request, obj=None):
+        if obj is None:
+            return ("name", "region", "status", "about", "address", "phone")
+        return ("id", "name", "region", "status", "about", "address", "phone")
 
 
 @admin.register(Dispensed)
