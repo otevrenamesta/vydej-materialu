@@ -19,7 +19,7 @@
     <title>{% block title %}{% endblock title %} - Výdej materiálu</title>
   </head>
   <body class="d-flex flex-column vh-100">
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark flex-shrink-0">
+    <nav class="navbar navbar-expand-sm navbar-dark flex-shrink-0">
       <div class="container">
         <a class="navbar-brand" href="/">
           <i class="fas fa-plus-square mr-2"></i>
@@ -36,23 +36,14 @@
 
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item {% if request.resolver_match.view_name == "main:dispense" %}active{% endif %}">
-              <a class="nav-link" href="{% url "main:dispense" %}">Výdej</a>
-            </li>
-
-            <li class="nav-item {% if request.resolver_match.view_name == "main:about" %}active{% endif %}">
-              <a class="nav-link" href="{% url "main:about" %}">O&nbsp;Aplikaci</a>
-            </li>
+            {% include "main/menu_item_snippet.html" with view_name="main:region_list" title="Oblasti" %}
+            {% include "main/menu_item_snippet.html" with view_name="main:about" title="O&nbsp;aplikaci" %}
           </ul>
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url "admin:index" %}">Spravovat</a>
-            </li>
-
+            {% include "main/menu_item_snippet.html" with view_name="main:dispense" title="Výdej" %}
+            {% include "main/menu_item_snippet.html" with view_name="admin:index" title="Spravovat" %}
             {% if request.user.is_authenticated %}
-            <li class="nav-item ">
-              <a class="nav-link" href="{% url "main:logout" %}">Odhlásit</a>
-            </li>
+              {% include "main/menu_item_snippet.html" with view_name="main:logout" title="Odhlásit" %}
             {% endif %}
           </ul>
         </div>
