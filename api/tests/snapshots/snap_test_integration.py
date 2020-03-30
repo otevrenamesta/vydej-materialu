@@ -52,12 +52,12 @@ snapshots['test_material__nothing_available 1'] = {
 snapshots['test_material 1'] = {
     'material': [
         {
-            'id': 2,
-            'name': 'Respirátor'
-        },
-        {
             'id': 1,
             'name': 'Rouška'
+        },
+        {
+            'id': 2,
+            'name': 'Respirátor'
         }
     ],
     'result': 'success'

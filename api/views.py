@@ -120,7 +120,7 @@ class LoginView(ApiRequestValidationMixin, View):
 
 class MaterialView(ApiStaffRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        materials = Material.get_available(request.user.api_location.id)
+        materials = Material.get_available(request.user.api_location.id).order_by("id")
 
         response = {
             "result": "success",
@@ -211,7 +211,7 @@ class ValidateView(ApiStaffRequiredMixin, ApiRequestValidationMixin, View):
     }
 
     def post(self, request, body, *args, **kwargs):
-        materials = Material.get_available(request.user.api_location.id)
+        materials = Material.get_available(request.user.api_location.id).order_by("id")
 
         # TODO: Check that the ID is not blacklisted or stolen.
         id_card_no = int(body["idcardno"])
