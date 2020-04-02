@@ -19,7 +19,7 @@
   </ol>
 </nav>
 
-<h5>Výdejní lokalita #{{object.id}}</h5>
+<h5>Výdejní lokalita <small class="text-muted">#</small>{{object.id}}</h5>
 <table class="table table-sm table-bordered">
   <tr>
     <th style="width: 10em">Název lokality</th>
@@ -47,41 +47,34 @@
   <tr>
     <th>Personál</th>
     <td>
-      <div>
-        {% with cnt=admins.count %}
-        {% if cnt == 1 %}
-        {{cnt}} koordinátor
-        {% elif cnt <= 4 and cnt > 1 %}
-        {{cnt}} koordinátoři
-        {% else %}
-        {{cnt}} koordinátorů
-        {% endif %}
-        {% endwith %}
-      </div>
+      {% if admins_count == 1 %}
+        {{ admins_count }} koordinátor
+      {% elif admins_count <= 4 and admins_count > 1 %}
+        {{ admins_count }} koordinátoři
+      {% else %}
+        {{ admins_count }} koordinátorů
+      {% endif %}
+      <br>
 
-      <div>
-        {% with cnt=volunteers.count %}
-        {% if cnt == 1 %}
-        {{cnt}} dobrovolník
-        {% elif cnt <= 4 and cnt > 1 %}
-        {{cnt}} dobrovolníci
-        {% else %}
-        {{cnt}} dobrovolníků
-        {% endif %}
-        {% endwith %}
-      </div>
+      {% if volunteers_count == 1 %}
+        {{ volunteers_count }} dobrovolník
+      {% elif volunteers_count <= 4 and volunteers_count > 1 %}
+        {{ volunteers_count }} dobrovolníci
+      {% else %}
+        {{ volunteers_count }} dobrovolníků
+      {% endif %}
+      <br>
 
-      <div>
-        {% with cnt=pending.count %}
-        {% if cnt == 1 %}
-        {{cnt}} čekatel
-        {% elif cnt <= 4 and cnt > 1 %}
-        {{cnt}} čekatelé
-        {% else %}
-        {{cnt}} čekatelů
-        {% endif %}
-        {% endwith %}
-      </div>
+      {% if pending_count == 1 %}
+        {{ pending_count }} čekatel
+      {% elif pending_count <= 4 and pending_count > 1 %}
+        {{ pending_count }} čekatelé
+      {% else %}
+        {{ pending_count }} čekatelů
+      {% endif %}
+      <br>
+
+      <a href="{% url "main:login" %}?location={{ object.id }}">chci pomoci s výdejem</a>
     </td>
   </tr>
 </table>
@@ -89,9 +82,9 @@
 <h5>Popis</h5>
 <div class="description">
   {% if object.about %}
-  {{ object.about|markdownify }}
+    {{ object.about|markdownify }}
   {% else %}
-  <i>není uveden</i>
+    <i>není uveden</i>
   {% endif %}
 </div>
 

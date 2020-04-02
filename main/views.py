@@ -138,14 +138,14 @@ class LocationView(DetailView):
     slug_url_kwarg = "id"
 
     def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["volunteers"] = self.object.staff.filter(
+        context = super().get_context_data(**kwargs)
+        context["volunteers_count"] = self.object.staff.filter(
             locationstaff__status=LocationStaff.VOLUNTEER
-        )
-        ctx["admins"] = self.object.staff.filter(
+        ).count()
+        context["admins_count"] = self.object.staff.filter(
             locationstaff__status=LocationStaff.ADMIN
-        )
-        ctx["pending"] = self.object.staff.filter(
+        ).count()
+        context["pending_count"] = self.object.staff.filter(
             locationstaff__status=LocationStaff.PENDING
-        )
-        return ctx
+        ).count()
+        return context

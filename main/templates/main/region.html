@@ -28,7 +28,7 @@
 <table class="table table-sm">
   {% for location in object.location_set.all %}
   <tr>
-    <td style="width: 0">#{{location.id}}</td>
+    <td style="width: 0"><small class="text-muted">#</small>{{location.id}}</td>
     <th>
       <a href="{% url "main:location" location.id %}">
         {{location.name}}
