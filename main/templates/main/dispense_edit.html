@@ -4,7 +4,7 @@
 
 <h2 class="h5 mt-4 mb-2">Úprava záznamu</h2>
 
-<form method="post" action="{% url 'main:dispense_edit' pk=object.pk %}" autocomplete="off">
+<form method="post" action="{% url "main:dispense_edit" pk=object.pk %}" autocomplete="off">
   {% csrf_token %}
 
   <table class="table table-sm">
@@ -37,5 +37,7 @@
 
   </table>
 </form>
+
+{% include "main/dispense_location_snippet.html" with location=object.location %}
 
 {% endblock content %}

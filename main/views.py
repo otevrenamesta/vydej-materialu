@@ -62,9 +62,12 @@ class DispenseView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dispensed"] = Dispensed.objects.filter(
-            location_id=self.request.session["location_id"]
-        )[: self.history_limit]
+        context["location"] = Location.objects.get(
+            id=self.request.session["location_id"]
+        )
+        context["dispensed"] = Dispensed.objects.filter(location=context["location"])[
+            : self.history_limit
+        ]
         return context
 
     def get(self, request, *args, **kwargs):
@@ -88,6 +91,9 @@ class DispenseNewView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, id_card_no, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["location"] = Location.objects.get(
+            id=self.request.session["location_id"]
+        )
         context["id_card_no"] = id_card_no
         context["forms"] = [DispenseItemForm(mat) for mat in self.get_materials()]
         return context

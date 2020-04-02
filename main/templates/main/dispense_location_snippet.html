@@ -1,0 +1,6 @@
+<hr>
+<p>
+  Vydáváte v lokalitě
+  <a href="{% url "main:location" location.id %}"><small class="text-muted">#</small>{{ location.id }} {{ location.name }}</a>
+  (oblast <a href="{% url "main:region" location.region_id %}">{{ location.region_name }}</a>)
+</p>
