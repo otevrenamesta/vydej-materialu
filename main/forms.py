@@ -3,7 +3,7 @@ from crispy_forms.layout import Submit
 from django import forms
 from pagedown.widgets import AdminPagedownWidget
 
-from .models import Dispensed, Location, Material
+from .models import Dispensed, Location
 
 
 class LoginForm(forms.Form):
@@ -11,15 +11,20 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         label="Heslo", widget=forms.PasswordInput(), max_length=100
     )
-    location = forms.ModelChoiceField(label="Lokalita", queryset=Location.objects.all())
+    location = forms.IntegerField(label="Číslo lokality")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = "form-horizontal"
-        self.helper.label_class = "col-lg-1"
-        self.helper.field_class = "col-lg-4"
+        self.helper.label_class = "col-sm-2"
+        self.helper.field_class = "col-sm-4"
         self.helper.add_input(Submit("submit", "Přihlásit"))
+
+    def clean_location(self):
+        location_id = self.cleaned_data["location"]
+        if not Location.objects.filter(id=location_id).exists():
+            raise forms.ValidationError(f"Lokalita číslo {location_id} neexistuje.")
 
 
 class DispenseStartForm(forms.Form):

@@ -7,4 +7,13 @@
 
 {% crispy form %}
 
+<p>
+  <a href="{% url "main:password_reset" %}">Zapomenuté heslo</a>
+</p>
+
+<h2 class="h5 mt-4 mb-2">Chceš se zapojit?</h2>
+<p>
+  <a href="{% url "main:registration" %}">Registruj se jako dobrovolník</a>
+</p>
+
 {% endblock content %}

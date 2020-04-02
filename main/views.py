@@ -37,11 +37,16 @@ class LoginView(FormView):
         )
         if user is not None:
             login(self.request, user)
-            self.request.session["location_id"] = form.cleaned_data["location"].id
+            self.request.session["location_id"] = form.cleaned_data["location"]
         return super().form_valid(form)
 
     def get_success_url(self):
         return reverse("main:dispense")
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial["location"] = self.request.GET.get("location")
+        return initial
 
 
 class LogoutView(View):
