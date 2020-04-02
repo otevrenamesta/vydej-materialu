@@ -48,12 +48,6 @@ class DispenseItemForm(forms.Form):
         self.material = material
 
 
-class DispensedForm(forms.ModelForm):
-    class Meta:
-        model = Dispensed
-        fields = ["material", "id_card_no", "quantity"]
-
-
 class LocationAdminForm(forms.ModelForm):
     class Meta:
         model = Location
