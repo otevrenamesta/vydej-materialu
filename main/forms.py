@@ -25,6 +25,7 @@ class LoginForm(forms.Form):
         location_id = self.cleaned_data["location"]
         if not Location.objects.filter(id=location_id).exists():
             raise forms.ValidationError(f"Lokalita číslo {location_id} neexistuje.")
+        return location_id
 
 
 class DispenseStartForm(forms.Form):
