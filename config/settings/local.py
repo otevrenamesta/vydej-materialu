@@ -9,6 +9,10 @@ SECRET_KEY = env(
     default="asd485a353SD45jknjksd8989735245SDBHkjh82213SHDBoiierup",
 )
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
+)
+SITE_URL = env("SITE_URL", default="http://localhost:8008")
 
 # django-debug-toolbar
 # ------------------------------------------------------------------------------

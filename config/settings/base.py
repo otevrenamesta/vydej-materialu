@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.admin",
+    "django_registration",
     "crispy_forms",
     "markdownify",
     "pagedown.apps.PagedownConfig",
@@ -49,6 +50,7 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/prihlaseni/"
+ACCOUNT_ACTIVATION_DAYS = 7
 
 # MIDDLEWARE
 # ------------------------------------------------------------------------------
@@ -81,8 +83,9 @@ MEDIA_ROOT = str(ROOT_DIR("media_files"))
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
+        "DIRS": [str(ROOT_DIR("config/templates"))],
         "OPTIONS": {
-            "loaders": ["django.template.loaders.app_directories.Loader",],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -92,6 +95,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                "main.context_processors.settings",
             ],
         },
     }
@@ -126,6 +130,9 @@ X_FRAME_OPTIONS = "DENY"
 EMAIL_BACKEND = env(
     "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.dummy.EmailBackend"
 )
+EMAIL_SUBJECT_PREFIX = env.str("EMAIL_PREFIX", default="[Výdej materiálu] ")
+SERVER_EMAIL = env.str("EMAIL_FROM", default="noreply@vydej-materialu.cz")
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
 
 # ADMIN
 # ------------------------------------------------------------------------------

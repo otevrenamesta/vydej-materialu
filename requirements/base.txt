@@ -4,18 +4,20 @@
 #
 #    pip-compile base.in
 #
-asgiref==3.2.5            # via django
+asgiref==3.2.7            # via django
 attrs==19.3.0             # via jsonschema
 bleach==3.1.4             # via django-markdownify
+confusable-homoglyphs==3.2.0  # via django-registration
 django-crispy-forms==1.9.0  # via -r base.in
 django-environ==0.4.5     # via -r base.in
 django-markdownify==0.8.0  # via -r base.in
 django-pagedown==2.0.3    # via -r base.in
-django==3.0.4             # via -r base.in, django-markdownify, django-pagedown
+django-registration==3.1  # via -r base.in
+django==3.0.5             # via -r base.in, django-markdownify, django-pagedown, django-registration
 jsonschema==3.2.0         # via -r base.in
 markdown==3.2.1           # via django-markdownify
 psycopg2-binary==2.8.4    # via -r base.in
-pyrsistent==0.15.7        # via jsonschema
+pyrsistent==0.16.0        # via jsonschema
 pytz==2019.3              # via django
 six==1.14.0               # via bleach, jsonschema, pyrsistent
 sqlparse==0.3.1           # via django

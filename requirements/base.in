@@ -3,6 +3,7 @@ django-environ
 django-crispy-forms
 django-pagedown
 django-markdownify
+django-registration
 psycopg2-binary
 whitenoise
 jsonschema
