@@ -45,3 +45,19 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 LOGGING["filters"] = {
     "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}
 }
+
+# EMAIL
+# ------------------------------------------------------------------------------
+INSTALLED_APPS.append("anymail")
+ANYMAIL = {
+    "MAILGUN_API_KEY": env.str("MAILGUN_API_KEY"),
+    "MAILGUN_API_URL": env.str(
+        "MAILGUN_API_URL", default="https://api.eu.mailgun.net/v3",
+    ),
+    "MAILGUN_SENDER_DOMAIN": env.str(
+        "MAILGUN_SENDER_DOMAIN", default="mail.vydej-materialu.cz"
+    ),
+}
+EMAIL_BACKEND = env.str(
+    "DJANGO_EMAIL_BACKEND", default="anymail.backends.mailgun.EmailBackend"
+)
