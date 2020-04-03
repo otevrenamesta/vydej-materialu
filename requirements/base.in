@@ -4,6 +4,7 @@ django-crispy-forms
 django-pagedown
 django-markdownify
 django-registration
+django-anymail[mailgun]
 psycopg2-binary
 whitenoise
 jsonschema
