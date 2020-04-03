@@ -1,5 +1,6 @@
 {% extends "main/base.html" %}
 {% load crispy_forms_tags %}
+
 {% block title %}Přihlášení{% endblock title %}
 {% block content %}
 
@@ -7,13 +8,11 @@
 
 {% crispy form %}
 
-<p>
-  <a href="{% url "main:password_reset" %}">Zapomenuté heslo</a>
-</p>
+<p>Číslo lokality vám sdělí koordinátor nebo ho naleznete procházením <a href="{% url "main:region_list" %}">oblastí</a>.</p>
+
+<p><a href="{% url "main:password_reset" %}">Zapomenuté heslo</a></p>
 
 <h2 class="h5 mt-4 mb-2">Chceš se zapojit?</h2>
-<p>
-  <a href="{% url "main:registration" %}">Registruj se jako dobrovolník</a>
-</p>
+<p><a href="{% url "django_registration_register" %}">Registruj se jako dobrovolník</a></p>
 
 {% endblock content %}

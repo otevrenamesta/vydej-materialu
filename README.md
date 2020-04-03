@@ -20,6 +20,13 @@ V produkci musí být navíc nastaveno:
 | --- | --- | --- |
 | `DJANGO_SECRET_KEY` | | tajný šifrovací klíč |
 | `DJANGO_ALLOWED_HOSTS` | | allowed hosts (více hodnot odděleno čárkami) |
+| `SITE_URL` | | adresa webu bez lomítka na konci (vkládá se do emailů) |
+
+Další konfigurační parametry:
+
+| proměnná | default | popis |
+| --- | --- | --- |
+| `EMAIL_FROM` | noreply@vydej-materialu.cz | adresa pro emaily z aplikace |
 
 ## Management projektu
 
@@ -93,6 +100,7 @@ Pro lokální vývoj obsahují settings:
 
     DEBUG = True
     ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
+    SITE_URL = "http://localhost:8008"
 
 ### Management projektu
 

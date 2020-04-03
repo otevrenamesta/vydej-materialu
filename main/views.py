@@ -19,10 +19,6 @@ class AboutView(TemplateView):
     template_name = "main/about.html"
 
 
-class RegistrationView(TemplateView):
-    template_name = "main/under_construction.html"
-
-
 class PasswordResetView(TemplateView):
     template_name = "main/under_construction.html"
 

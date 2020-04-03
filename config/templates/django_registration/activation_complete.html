@@ -1,0 +1,11 @@
+{% extends "main/base.html" %}
+
+{% block title %}Registrace{% endblock title %}
+{% block content %}
+
+<div class="alert alert-success" role="alert">
+  <h2 class="h5">Účet byl aktivován</h2>
+  <p class="mb-0">Pokračujte na <a href="{% url "main:login" %}">přihlášení</a>.</p>
+</div>
+
+{% endblock content %}

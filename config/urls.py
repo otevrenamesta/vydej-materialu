@@ -2,14 +2,52 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
+from django.views.generic import TemplateView
+from django_registration.backends.activation import views as reg_views
 
 import api.urls
 import main.urls
+from users.forms import UserRegistrationForm
 
 urlpatterns = [
-    path("", include(main.urls)),
+    # api urls
     path(settings.API_URL, include(api.urls)),
+    # admin urls
     path(settings.ADMIN_URL, admin.site.urls),
+    # django-registration urls
+    path(
+        "registrace/",
+        reg_views.RegistrationView.as_view(form_class=UserRegistrationForm),
+        name="django_registration_register",
+    ),
+    path(
+        "registrace/aktivace/dokoncena/",
+        TemplateView.as_view(
+            template_name="django_registration/activation_complete.html"
+        ),
+        name="django_registration_activation_complete",
+    ),
+    path(
+        "registrace/aktivace/<str:activation_key>/",
+        reg_views.ActivationView.as_view(),
+        name="django_registration_activate",
+    ),
+    path(
+        "registrace/dokoncena/",
+        TemplateView.as_view(
+            template_name="django_registration/registration_complete.html"
+        ),
+        name="django_registration_complete",
+    ),
+    path(
+        "registrace/uzavrena/",
+        TemplateView.as_view(
+            template_name="django_registration/registration_disallowed.html"
+        ),
+        name="django_registration_disallowed",
+    ),
+    # main urls
+    path("", include(main.urls)),
 ]
 
 if settings.DEBUG:

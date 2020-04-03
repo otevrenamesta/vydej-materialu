@@ -1,0 +1,11 @@
+Dobrý den,
+
+pro potvrzení emailové adresy a aktivaci uživatelského účtu otevřete následující odkaz:
+
+{{ settings.SITE_URL }}{% url "django_registration_activate" activation_key=activation_key %}
+
+Registrace musí být dokončena do {{ expiration_days }}. dnů.
+
+Pokud jste se na webu {{ settings.SITE_URL }} neregistrovali, tak tento email prosím ignorujte.
+
+Děkujeme
